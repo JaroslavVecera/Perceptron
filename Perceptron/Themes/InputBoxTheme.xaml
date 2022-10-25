@@ -11,7 +11,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
-                        <Grid Height="40" MinWidth="40">
+                        <Grid Height="40" MinWidth="40"  Name="Node">
                             <Path Fill="{TemplateBinding Background}" HorizontalAlignment="Left">
                                 <Path.Data>
                                     <PathGeometry>
@@ -55,7 +55,7 @@
                                     </PathGeometry>
                                 </Path.Data>
                             </Path>
-                            <TextBox Margin="5"
+                            <TextBox  Margin="5"
                                      FontSize="20"
                                      FontWeight="DemiBold"
                                      Text="{TemplateBinding Text}"
@@ -65,6 +65,20 @@
                                      VerticalAlignment="Center"
                                      TextAlignment="Center"
                                      BorderThickness="0"/>
+                            <Button Height="15" Width="15" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource NodeCrossButton}">
+                                        <Style.Setters>
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                        </Style.Setters>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=IsMouseOver, ElementName=Node, Mode=OneWay}" Value="True">
+                                                <Setter  Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
