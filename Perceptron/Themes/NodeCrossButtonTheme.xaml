@@ -1,0 +1,40 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style x:Key="NodeCrossButton" TargetType="Button">
+        <Style.Setters>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <SolidColorBrush Color="Red" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse Width="15" Height="15" Fill="{TemplateBinding Background}" />
+                            <Line X1="4" Y1="4" X2="11" Y2="11" Stroke="White" StrokeThickness="1.5"/>
+                            <Line X1="4" Y1="11" X2="11" Y2="4" Stroke="White" StrokeThickness="1.5"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style.Setters>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <SolidColorBrush Color="Blue" />
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <SolidColorBrush Color="Yellow" />
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

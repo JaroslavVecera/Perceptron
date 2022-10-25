@@ -9,6 +9,7 @@
                 <ResourceDictionary Source="Themes/CustomeWindowTheme.xaml" ></ResourceDictionary>
                 <ResourceDictionary Source="Themes/Colors.xaml" ></ResourceDictionary>
                 <ResourceDictionary Source="Themes/MainMenuButtonTheme.xaml" ></ResourceDictionary>
+                <ResourceDictionary Source="Themes/NodeCrossButtonTheme.xaml" ></ResourceDictionary>
                 <ResourceDictionary Source="Themes/InputBoxTheme.xaml" ></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
