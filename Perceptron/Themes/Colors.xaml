@@ -7,4 +7,6 @@
     <Color x:Key="LightColor">#e1e1e1</Color>
     <Color x:Key="GrayColor">#c1c1c1</Color>
     <Color x:Key="NodeColor">#ffffbb</Color>
+    <Color x:Key="TitleColor">#228877</Color>
+    <Color x:Key="LighterTitleColor">#42a897</Color>
 </ResourceDictionary>

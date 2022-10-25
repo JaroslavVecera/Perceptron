@@ -12,8 +12,7 @@
                     <ControlTemplate TargetType="Button">
                         <Grid>
                             <Ellipse Width="15" Height="15" Fill="{TemplateBinding Background}" />
-                            <Line X1="4" Y1="4" X2="11" Y2="11" Stroke="White" StrokeThickness="1.5"/>
-                            <Line X1="4" Y1="11" X2="11" Y2="4" Stroke="White" StrokeThickness="1.5"/>
+                            <TextBlock Text="✕" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>

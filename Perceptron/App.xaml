@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="Themes/MainMenuButtonTheme.xaml" ></ResourceDictionary>
                 <ResourceDictionary Source="Themes/NodeCrossButtonTheme.xaml" ></ResourceDictionary>
                 <ResourceDictionary Source="Themes/InputBoxTheme.xaml" ></ResourceDictionary>
+                <ResourceDictionary Source="Themes/TitleBarButtonsTheme.xaml" ></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type viewModel:DirectInputViewModel}">

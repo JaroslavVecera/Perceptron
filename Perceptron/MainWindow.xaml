@@ -8,7 +8,10 @@
         xmlns:viewModel="clr-namespace:Perceptron.MVVM.ViewModel"
         xmlns:latex="clr-namespace:WpfMath.Controls;assembly=WpfMath"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        WindowStyle="None"
+        ResizeMode="CanResizeWithGrip"
+        AllowsTransparency="True"
+        Title="MainWindow" MinHeight="450" MinWidth="1000">
     <Window.DataContext>
         <viewModel:MainWindowViewModel />
     </Window.DataContext>
@@ -19,7 +22,7 @@
         </Grid.Background>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
@@ -28,9 +31,25 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Border Background="#228877" Grid.Column="1"/>
+        <Grid Grid.ColumnSpan="2"
+              HorizontalAlignment="Stretch"
+              MouseDown="TitleBar_MouseDown">
+            <Grid.Background>
+                <SolidColorBrush Color="{StaticResource TitleColor}" />
+            </Grid.Background>
+            <StackPanel VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button FontSize="18" Content="_" Height="30" Width="40" Click="MinimizeButton_Click"
+                        Background="Transparent" BorderThickness="0" Foreground="White" Style="{StaticResource TitleBarButton}"/>
+                <Button FontSize="18" Content="⬜" Height="30" Width="40"
+                        Background="Transparent" BorderThickness="0" Foreground="White" Click="MaximizeButton_Click" Style="{StaticResource TitleBarButton}"/>
+                <Button  FontSize="18" Content="✕" Height="30" Width="40"
+                        Background="Transparent" BorderThickness="0" Foreground="White" Click="CloseButton_Click" Style="{StaticResource TitleBarButton}"/>
+            </StackPanel>
 
-        <StackPanel Grid.Row="1">
+        </Grid>
+
+        <StackPanel Grid.Row="1"
+                    Margin="0,50,0,0">
             <RadioButton Style="{StaticResource ResourceKey=MainMenuButton}"
                          Content="Direct Input"
                          IsChecked="True"
