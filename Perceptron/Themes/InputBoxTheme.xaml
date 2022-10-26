@@ -8,6 +8,7 @@
                     <SolidColorBrush Color="{StaticResource NodeColor}" />
                 </Setter.Value>
             </Setter>
+            <Setter Property="Foreground" Value="Black" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
@@ -58,10 +59,10 @@
                             <TextBox  Margin="5"
                                      FontSize="20"
                                      FontWeight="DemiBold"
-                                     Text="{TemplateBinding Text}"
+                                     Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      Background="Transparent"
-                                     Foreground="Black"
                                      MaxWidth="70"
+                                     Foreground="{TemplateBinding Foreground}"
                                      VerticalAlignment="Center"
                                      TextAlignment="Center"
                                      BorderThickness="0"/>

@@ -5,16 +5,81 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Perceptron.MVVM.View"
              xmlns:view="clr-namespace:Perceptron.MVVM.View"
-        xmlns:latex="clr-namespace:WpfMath.Controls;assembly=WpfMath"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:viewModel="clr-namespace:Perceptron.MVVM.ViewModel"
+             xmlns:latex="clr-namespace:WpfMath.Controls;assembly=WpfMath"
+             xmlns:converter="clr-namespace:Perceptron.MVVM.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <converter:BoolToColorConverter x:Key="BoolToColorConverter" />
+        <DataTemplate DataType="{x:Type viewModel:InputNodeViewModel}">
+            <TextBox Style="{StaticResource InputBox}" Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}" Foreground="{Binding IsNumeric, Converter={StaticResource BoolToColorConverter}}"/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:EdgeViewModel}">
+            <view:CurvedEdge MaxArcRadius="12" StrokeThickness="2" Source="{Binding Source}" Sink="{Binding Sink}">
+                <view:CurvedEdge.Stroke>
+                    <SolidColorBrush Color="{StaticResource NodeColor}" />
+                </view:CurvedEdge.Stroke>
+            </view:CurvedEdge>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:SumNodeViewModel}">
+            <Grid Width="100" Height="100">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Ellipse Height="100" Width="100" Grid.ColumnSpan="2" Grid.RowSpan="2">
+                    <Ellipse.Fill>
+                        <SolidColorBrush Color="{StaticResource NodeColor}" />
+                    </Ellipse.Fill>
+                </Ellipse>
+                <Rectangle Width="3" Grid.ColumnSpan="2" Grid.RowSpan="2">
+                    <Rectangle.Fill>
+                        <SolidColorBrush Color="{StaticResource PrimaryColor}" />
+                    </Rectangle.Fill>
+                </Rectangle>
+                <latex:FormulaControl Formula="\sum" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,10,0,0"/>
+                <latex:FormulaControl Formula="\sum" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,10,0"/>
+                <TextBlock Text="{Binding Sum, ValidatesOnDataErrors=True, TargetNullValue=''}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Margin="10,0,0,0"/>
+                <TextBox Text="{Binding Bias, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Margin="0,0,10,0"/>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:OutputNodeViewModel}">
+            <Grid Canvas.Left="350" Canvas.Top="200">
+                <Ellipse Height="40" Width="40">
+                    <Ellipse.Fill>
+                        <SolidColorBrush Color="{StaticResource NodeColor}" />
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock Text="{Binding Output, ValidatesOnDataErrors=True, TargetNullValue='', Mode=OneWay}" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Grid>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:WeightViewModel}">
+            <TextBox Text="{Binding Weight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MaxWidth="70"/>
+        </DataTemplate>
+    </UserControl.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid>
+        <Grid  Name="Graph">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SizeChanged">
+                    <i:InvokeCommandAction x:Name="test1" Command="{Binding SetWidthCommand}"
+                                       CommandParameter="{Binding Path=ActualWidth, ElementName=Graph}"/>
+                    <i:InvokeCommandAction x:Name="test2" Command="{Binding GraphRedrawCommand}"
+                                       CommandParameter="{Binding Path=ActualHeight, ElementName=Graph}" Changed="test1_Changed"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="50" />
@@ -33,7 +98,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-
+                
                 <TextBlock Text="Input"
                            Grid.Column="0"
                            Grid.Row="0"
@@ -69,64 +134,21 @@
                            HorizontalAlignment="Center"
                            Foreground="White"
                            FontSize="16"/>
-                <Canvas Grid.ColumnSpan="5"
-                        Grid.Row="1">
-                    <view:CurvedEdge MaxArcRadius="12" StrokeThickness="2" Source="70,170" Sink="200,220">
-                        <view:CurvedEdge.Stroke>
-                            <SolidColorBrush Color="{StaticResource NodeColor}" />
-                        </view:CurvedEdge.Stroke>
-                    </view:CurvedEdge>
-                    <view:CurvedEdge MaxArcRadius="12" StrokeThickness="2" Source="70,220" Sink="200,220">
-                        <view:CurvedEdge.Stroke>
-                            <SolidColorBrush Color="{StaticResource NodeColor}" />
-                        </view:CurvedEdge.Stroke>
-                    </view:CurvedEdge>
-                    <view:CurvedEdge MaxArcRadius="12" StrokeThickness="2" Source="70,270" Sink="200,220">
-                        <view:CurvedEdge.Stroke>
-                            <SolidColorBrush Color="{StaticResource NodeColor}" />
-                        </view:CurvedEdge.Stroke>
-                    </view:CurvedEdge>
-
-                    <TextBox Canvas.Left="50" Canvas.Top="150" Style="{StaticResource InputBox}" />
-                    <TextBox Canvas.Left="50" Canvas.Top="200" Style="{StaticResource InputBox}" />
-                    <TextBox Canvas.Left="50" Canvas.Top="250" Style="{StaticResource InputBox}" />
-
-                    <Grid Canvas.Left="200" Canvas.Top="170" Width="100" Height="100">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Ellipse Height="100" Width="100" Grid.ColumnSpan="2" Grid.RowSpan="2">
-                            <Ellipse.Fill>
-                                <SolidColorBrush Color="{StaticResource NodeColor}" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <Rectangle Width="3" Grid.ColumnSpan="2" Grid.RowSpan="2">
-                            <Rectangle.Fill>
-                                <SolidColorBrush Color="{StaticResource PrimaryColor}" />
-                            </Rectangle.Fill>
-                        </Rectangle>
-                        <latex:FormulaControl Formula="\sum" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,10,0,0"/>
-                        <latex:FormulaControl Formula="\sum" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,10,0"/>
-                        <TextBlock Text="0" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Margin="10,0,0,0"/>
-                        <TextBox Text="0" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Margin="0,0,10,0"/>
-                    </Grid>
-
-                    <Line X1="250" Y1="220" X2="350" Y2="220" Stroke="AliceBlue" StrokeThickness="3"/>
-
-                    <Grid Canvas.Left="350" Canvas.Top="200">
-                        <Ellipse Height="40" Width="40">
-                            <Ellipse.Fill>
-                                <SolidColorBrush Color="{StaticResource NodeColor}" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <TextBlock Text="1" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Grid>
-                </Canvas>
+                <ItemsControl Grid.ColumnSpan="5"
+                              Grid.Row="1"
+                              ItemsSource="{Binding Path=GraphItems}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding Left}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Top}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
             </Grid>
 
             <Grid Grid.Row="1">
@@ -148,7 +170,7 @@
                             HorizontalAlignment="Center">
                     <Button Content="Step1"></Button>
                     <Button Content="Step2"></Button>
-                    <Button Content="Step3"></Button>
+                    <Button Content="Step3" Command="{Binding Step3Command}"></Button>
                 </StackPanel>
 
                 <StackPanel Grid.Column="2"

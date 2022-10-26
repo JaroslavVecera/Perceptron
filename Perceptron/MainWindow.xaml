@@ -11,7 +11,7 @@
         WindowStyle="None"
         ResizeMode="CanResizeWithGrip"
         AllowsTransparency="True"
-        Title="MainWindow" MinHeight="450" MinWidth="1000">
+        Title="MainWindow" MinHeight="750" MinWidth="1200">
     <Window.DataContext>
         <viewModel:MainWindowViewModel />
     </Window.DataContext>
