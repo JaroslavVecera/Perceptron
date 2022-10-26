@@ -193,12 +193,12 @@ namespace Perceptron
 
         void SetWeightInput(int index, float value)
         {
-            Network.Weights[0, index] = value;
+            Network.Weights[index, 0] = value;
         }
 
         float GetWeightInput(int index)
         {
-            return Network.Weights[0, index];
+            return Network.Weights[index, 0];
         }
 
         float? GetSum()

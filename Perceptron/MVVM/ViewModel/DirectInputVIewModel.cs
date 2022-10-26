@@ -32,7 +32,7 @@ namespace Perceptron.MVVM.ViewModel
 
         public DirectInputViewModel()
         {
-            Network = new Network.Network(1, 1, (float)0.5);
+            Network = new Network.Network(5, 1, (float)0.5);
             ExecutionService = new NetworkExecutionService(Network);
             Builder = new GraphBuilder(ExecutionService, Network);
             RebuildGraph();

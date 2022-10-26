@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="Themes/NodeCrossButtonTheme.xaml" ></ResourceDictionary>
                 <ResourceDictionary Source="Themes/InputBoxTheme.xaml" ></ResourceDictionary>
                 <ResourceDictionary Source="Themes/TitleBarButtonsTheme.xaml" ></ResourceDictionary>
+                <ResourceDictionary Source="Themes/ExecutionButtonsTheme.xaml" ></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type viewModel:DirectInputViewModel}">

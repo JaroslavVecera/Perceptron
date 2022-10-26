@@ -70,22 +70,22 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid  Name="Graph">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="SizeChanged">
-                    <i:InvokeCommandAction x:Name="test1" Command="{Binding SetWidthCommand}"
-                                       CommandParameter="{Binding Path=ActualWidth, ElementName=Graph}"/>
-                    <i:InvokeCommandAction x:Name="test2" Command="{Binding GraphRedrawCommand}"
-                                       CommandParameter="{Binding Path=ActualHeight, ElementName=Graph}" Changed="test1_Changed"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+        <Grid>
             
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="50" />
+                <RowDefinition Height="150" />
             </Grid.RowDefinitions>
 
-            <Grid>
+            <Grid Name="Graph">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SizeChanged">
+                        <i:InvokeCommandAction x:Name="test1" Command="{Binding SetWidthCommand}"
+                                       CommandParameter="{Binding Path=ActualWidth, ElementName=Graph}"/>
+                        <i:InvokeCommandAction x:Name="test2" Command="{Binding GraphRedrawCommand}"
+                                       CommandParameter="{Binding Path=ActualHeight, ElementName=Graph}" Changed="test1_Changed"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50" />
                     <RowDefinition Height="*" />
@@ -151,7 +151,7 @@
                 </ItemsControl>
             </Grid>
 
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="1" Margin="0,0,0,100">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -161,23 +161,23 @@
                 <StackPanel Grid.Column="0"
                             Orientation="Horizontal"
                             HorizontalAlignment="Center">
-                    <Button Content="Clear"></Button>
-                    <Button Content="Randomize"></Button>
+                    <Button Content="Clear" Style="{StaticResource ClearButton}" Command="{Binding ClearCommand}"></Button>
+                    <Button Content="Randomize"  Style="{StaticResource RandomizeButton}" Command="{Binding RandomizeCommand}"></Button>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1"
                             Orientation="Horizontal"
                             HorizontalAlignment="Center">
-                    <Button Content="Step1"></Button>
-                    <Button Content="Step2"></Button>
-                    <Button Content="Step3" Command="{Binding Step3Command}"></Button>
+                    <Button IsEnabled="True" Content="Step1" Style="{StaticResource Step1Button}" Command="{Binding Step1Command}"></Button>
+                    <Button IsEnabled="True" Content="Step2" Style="{StaticResource Step2Button}" Command="{Binding Step2Command}"></Button>
+                    <Button IsEnabled="True" Content="Step3" Style="{StaticResource Step3Button}" Command="{Binding Step3Command}"></Button>
                 </StackPanel>
 
                 <StackPanel Grid.Column="2"
                             Orientation="Horizontal"
                             HorizontalAlignment="Center">
-                    <Button Content="Save"></Button>
-                    <Button Content="Load"></Button>
+                    <Button Content="Save" Style="{StaticResource SaveButton}" Command="{Binding SaveCommand}"></Button>
+                    <Button Content="Load" Style="{StaticResource LoadButton}" Command="{Binding LoadCommand}"></Button>
                 </StackPanel>
             </Grid>
         </Grid>
