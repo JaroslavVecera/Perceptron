@@ -3,9 +3,10 @@ using Perceptron.Network;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Perceptron.MVVM.ViewModel
@@ -15,8 +16,11 @@ namespace Perceptron.MVVM.ViewModel
         public RelayCommand SetWidthCommand { get; set; }
         public RelayCommand GraphRedrawCommand { get; set; }
         public RelayCommand Step3Command { get; set; }
-        Network.Network Network { get; }
-        NetworkExecutionService ExecutionService { get; }
+        public RelayCommand ClearCommand { get; set; }
+        public RelayCommand SaveCommand { get; set; }
+        public RelayCommand LoadCommand { get; set; }
+        Network.Network Network { get; set; }
+        NetworkExecutionService ExecutionService { get; set; }
         GraphBuilder Builder { get; set; }
 
         List<PositionableViewModel> _graphItems;
@@ -68,9 +72,29 @@ namespace Perceptron.MVVM.ViewModel
             });
             Step3Command = new RelayCommand(o =>
             {
+                return;
                 ExecutionService.Step3();
                 Builder.NotifyOutput();
                 Builder.NotifySumNode();
+            });
+            ClearCommand = new RelayCommand(o =>
+            {
+            });
+            LoadCommand = new RelayCommand(o =>
+            {
+                var network = NetworkSerializer.Load();
+                if (network == null)
+                    return;
+                Network = network;
+                ExecutionService = new NetworkExecutionService(Network);
+                double width = Builder.Width;
+                double height = Builder.Height;
+                Builder = new GraphBuilder(ExecutionService, Network) { Height = height, Width = width };
+                RebuildGraph();
+            });
+            SaveCommand = new RelayCommand(o =>
+            {
+                NetworkSerializer.Save(Network);
             });
         }
     }
