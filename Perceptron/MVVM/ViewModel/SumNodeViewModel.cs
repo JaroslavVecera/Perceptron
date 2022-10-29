@@ -9,7 +9,7 @@ namespace Perceptron.MVVM.ViewModel
     class SumNodeViewModel : PositionableViewModel
     {
         public event Func<float?> GetSum;
-        public event Action< float> OnSetBias;
+        public event Action<float> OnSetBias;
         public event Func<float> OnGetBias;
 
         protected bool _isNumeric;
@@ -23,10 +23,10 @@ namespace Perceptron.MVVM.ViewModel
             }
         }
 
-        public double Value
+        public float Value
         {
-            get { return (double)OnGetBias.Invoke(); }
-            set { OnSetBias.Invoke((float)value); }
+            get { return (float)OnGetBias.Invoke(); }
+            set { OnSetBias.Invoke(value); }
         }
 
         string _bias;
@@ -48,17 +48,23 @@ namespace Perceptron.MVVM.ViewModel
 
         protected void ParseValue(string value)
         {
-            double parsed = 0;
-            bool canParse = double.TryParse(value, out parsed);
+            float parsed = 0;
+            bool canParse = float.TryParse(value, out parsed);
             if (canParse != IsNumeric)
                 IsNumeric = canParse;
             if (canParse)
                 Value = parsed;
         }
 
-        public double? Sum
+        public float? Sum
         {
-            get { return (double?)GetSum.Invoke(); }
+            get
+            {
+                float? res = (float?)GetSum.Invoke();
+                if (res.HasValue)
+                    res = (float)Math.Round(res.Value, 4);
+                return res;
+            }
         }
     }
 }

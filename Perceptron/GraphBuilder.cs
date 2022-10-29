@@ -14,6 +14,7 @@ namespace Perceptron
         List<WeightViewModel> Weights { get; set; } = new List<WeightViewModel>();
         SumNodeViewModel SumNode { get; set; }
         OutputNodeViewModel OutputNode { get; set; }
+        PlusNodeViewModel PlusButton { get; set; }
         Network.NetworkExecutionService ExecutionService { get; set; }
         Network.Network Network { get; set; }
 
@@ -32,8 +33,9 @@ namespace Perceptron
             RebuildEdges();
             RebuildSumNode();
             RebuildWeights();
-            InitializeOutputNode();
-            return InitializeGraphItems();
+            RebuildPlusButton();
+            RebuildOutputNode();
+            return RebuildGraphItems();
         }
 
         public void RedrawGraph()
@@ -43,6 +45,7 @@ namespace Perceptron
             RedrawOutputNode();
             RedrawEdges();
             RedrawWeights();
+            RedrawPlusButton();
         }
 
 
@@ -109,16 +112,23 @@ namespace Perceptron
             NotifyWeights();
         }
 
-        void InitializeOutputNode()
+        void RebuildOutputNode()
         {
             if (OutputNode != null)
                 OutputNode.GetOutput -= GetOutput;
             OutputNode = new OutputNodeViewModel();
             OutputNode.GetOutput += GetOutput;
-
         }
 
-        List<PositionableViewModel> InitializeGraphItems()
+        void RebuildPlusButton()
+        {
+            if (PlusButton != null)
+                PlusButton.AddInputNode -= AddInputNode;
+            PlusButton = new PlusNodeViewModel();
+            PlusButton.AddInputNode += AddInputNode;
+        }
+
+        List<PositionableViewModel> RebuildGraphItems()
         {
             List<PositionableViewModel> graphItems = new List<PositionableViewModel>();
             graphItems = new List<PositionableViewModel>();
@@ -127,6 +137,7 @@ namespace Perceptron
             InputNodes.ForEach(n => graphItems.Add(n));
             graphItems.Add(OutputNode);
             Weights.ForEach(w => graphItems.Add(w));
+            graphItems.Add(PlusButton);
             return graphItems;
         }
 
@@ -146,17 +157,17 @@ namespace Perceptron
             for (int i = 0; i < InputNodes.Count; i++)
             {
                 Edges[i].Source = new System.Windows.Point(InputNodes[i].Left + 40, InputNodes[i].Top + 20);
-                Edges[i].Sink = new System.Windows.Point(SumNode.Left, SumNode.Top + 50);
+                Edges[i].Sink = new System.Windows.Point(SumNode.Left, SumNode.Top + 75);
             };
-            Edges[InputNodes.Count].Source = new System.Windows.Point(SumNode.Left + 100, SumNode.Top + 50);
-            Edges[InputNodes.Count].Sink = new System.Windows.Point(OutputNode.Left, SumNode.Top + 50);
+            Edges[InputNodes.Count].Source = new System.Windows.Point(SumNode.Left + 100, SumNode.Top + 75);
+            Edges[InputNodes.Count].Sink = new System.Windows.Point(OutputNode.Left, SumNode.Top + 75);
         }
 
         void RedrawSumNode()
         {
             double left = GetColumnLeft(2);
-            SumNode.Left = left - 50;
-            SumNode.Top = Height / 2 - 50;
+            SumNode.Left = left - 75;
+            SumNode.Top = Height / 2 - 75;
         }
 
         void RedrawOutputNode()
@@ -168,12 +179,19 @@ namespace Perceptron
 
         void RedrawWeights()
         {
-            double left = GetColumnLeft(1) - 50;
+            double left = GetColumnLeft(1) - 100;
             for (int i = 0; i < Weights.Count; i++)
             {
                 Weights[i].Left = left;
-                Weights[i].Top = InputNodes[i].Top - 20;
+                Weights[i].Top = InputNodes[i].Top - 10;
             }
+        }
+
+        void RedrawPlusButton()
+        {
+            double left = InputNodes[0].Left;
+            PlusButton.Left = left;
+            PlusButton.Top = InputNodes.Last().Top + 60;
         }
 
         double GetColumnLeft(double index)
@@ -219,6 +237,12 @@ namespace Perceptron
         void SetBias(float value)
         {
             Network.Biases[0] = value;
+        }
+
+        void AddInputNode()
+        {
+            // bacha na to, že při změně je třeba resetovat progres v executionService!!!
+            throw new NotImplementedException();
         }
 
         public void NotifyInputNodes()

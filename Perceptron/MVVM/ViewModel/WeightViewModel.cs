@@ -8,15 +8,17 @@ namespace Perceptron.MVVM.ViewModel
 {
     class WeightViewModel : InputViewModel
     {
+        public string Latex { get; set; }
+
         public WeightViewModel(int index) : base(index)
         {
-
+            Latex = "w_" + index + "=";
         }
 
         public override void OnValueChanged()
         {
             Weight = Value.ToString();
-            base.OnValueChanged();
+            OnPropertyChanged("Weight");
         }
 
         string _weight;

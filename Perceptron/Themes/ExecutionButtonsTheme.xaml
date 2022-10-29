@@ -23,7 +23,7 @@
             <Trigger Property="IsPressed" Value="True">
                 <Setter Property="Background">
                     <Setter.Value>
-                        <SolidColorBrush Color="#154b97" />
+                        <SolidColorBrush Color="{StaticResource BlueColor}" />
                     </Setter.Value>
                 </Setter>
             </Trigger>

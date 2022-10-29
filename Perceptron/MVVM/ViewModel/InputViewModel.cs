@@ -24,10 +24,10 @@ namespace Perceptron.MVVM.ViewModel
             }
         }
 
-        public double Value
+        public float Value
         {
-            get { return (double)OnGetValue.Invoke(Index); }
-            set { OnSetValue.Invoke(Index, (float)value);  }
+            get { return OnGetValue.Invoke(Index); }
+            set { OnSetValue.Invoke(Index, value);  }
         }
 
         public virtual void OnValueChanged()
@@ -42,8 +42,8 @@ namespace Perceptron.MVVM.ViewModel
 
         protected void ParseValue(string value)
         {
-            double parsed = 0;
-            bool canParse = double.TryParse(value, out parsed);
+            float parsed = 0;
+            bool canParse = float.TryParse(value, out parsed);
             if (canParse != IsNumeric)
                 IsNumeric = canParse;
             if (canParse)

@@ -10,4 +10,8 @@
     <Color x:Key="TitleColor">#228877</Color>
     <Color x:Key="LighterTitleColor">#42a897</Color>
     <Color x:Key="GreenColor">#44cc55</Color>
+    <Color x:Key="LighterGreenColor">#66ee77</Color>
+    <Color x:Key="BlueColor">#154b97</Color>
+    <Color x:Key="BlackColor">Black</Color>
+    <Color x:Key="WhiteColor">White</Color>
 </ResourceDictionary>

@@ -19,6 +19,7 @@ namespace Perceptron.MVVM.ViewModel
         public RelayCommand ClearCommand { get; set; }
         public RelayCommand SaveCommand { get; set; }
         public RelayCommand LoadCommand { get; set; }
+        public RelayCommand RandomCommand { get; set; }
         Network.Network Network { get; set; }
         NetworkExecutionService ExecutionService { get; set; }
         GraphBuilder Builder { get; set; }
@@ -72,7 +73,6 @@ namespace Perceptron.MVVM.ViewModel
             });
             Step3Command = new RelayCommand(o =>
             {
-                return;
                 ExecutionService.Step3();
                 Builder.NotifyOutput();
                 Builder.NotifySumNode();
@@ -95,6 +95,12 @@ namespace Perceptron.MVVM.ViewModel
             SaveCommand = new RelayCommand(o =>
             {
                 NetworkSerializer.Save(Network);
+            });
+            RandomCommand = new RelayCommand(o =>
+            {
+                Network.InitializeRandom();
+                Builder.NotifyBiasNode();
+                Builder.NotifyWeights();
             });
         }
     }

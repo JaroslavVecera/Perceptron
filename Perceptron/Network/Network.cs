@@ -71,14 +71,16 @@ namespace Perceptron.Network
             InitializeRandom();
         }
 
-        void InitializeRandom()
+        public void InitializeRandom()
         {
+            if (Biases == null || Weights == null)
+                return;
             for (int i = 0; i < Neurons; i++)
             {
-                Biases[i] = (float)((Random.NextDouble() - 0.5) * 4);
+                Biases[i] = (float)Math.Round((float)((Random.NextDouble() - 0.5) * 4), 6);
                 for (int j = 0; j < InputLayer.Size; j++)
                 {
-                    Weights[j, i] = (float)((Random.NextDouble() - 0.5) * 4);
+                    Weights[j, i] = (float)Math.Round((float)((Random.NextDouble() - 0.5) * 4), 6);
                 }
             }
         }

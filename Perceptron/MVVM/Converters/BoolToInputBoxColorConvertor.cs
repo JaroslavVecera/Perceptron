@@ -14,8 +14,8 @@ namespace Perceptron.MVVM.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var val = (bool)value;
-            if (val)
-                return new SolidColorBrush(Colors.Black);
+            if (val && parameter is Color)
+                return new SolidColorBrush((Color)parameter);
             else
                 return new SolidColorBrush(Colors.Red);
         }
