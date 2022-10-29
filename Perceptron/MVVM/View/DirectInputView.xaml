@@ -7,14 +7,15 @@
              xmlns:view="clr-namespace:Perceptron.MVVM.View"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:viewModel="clr-namespace:Perceptron.MVVM.ViewModel"
-             xmlns:latex="clr-namespace:WpfMath.Controls;assembly=WpfMath"
              xmlns:converter="clr-namespace:Perceptron.MVVM.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <converter:BoolToColorConverter x:Key="BoolToColorConverter" />
         <DataTemplate DataType="{x:Type viewModel:InputNodeViewModel}">
-            <TextBox Style="{StaticResource InputBox}" Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}" Foreground="{Binding IsNumeric, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource BlackColor}}"/>
+            <TextBox Style="{StaticResource InputBox}"
+                     Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}"
+                     Foreground="{Binding IsNumeric, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource BlackColor}}"/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:EdgeViewModel}">
             <view:CurvedEdge MaxArcRadius="12" StrokeThickness="2" Source="{Binding Source}" Sink="{Binding Sink}">
@@ -24,63 +25,16 @@
             </view:CurvedEdge>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:SumNodeViewModel}">
-            <Grid Width="150" Height="150">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Ellipse Height="150" Width="150" Grid.ColumnSpan="2" Grid.RowSpan="2">
-                    <Ellipse.Fill>
-                        <SolidColorBrush Color="{StaticResource NodeColor}" />
-                    </Ellipse.Fill>
-                </Ellipse>
-                <Rectangle Width="3" Grid.ColumnSpan="2" Grid.RowSpan="2">
-                    <Rectangle.Fill>
-                        <SolidColorBrush Color="{StaticResource PrimaryColor}" />
-                    </Rectangle.Fill>
-                </Rectangle>
-                <latex:FormulaControl Formula="\sum" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,10,0,0"/>
-                <Path Data="M 0 30 L 15 30 L 15 0 L30 0" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Stroke="Black" StrokeThickness="2" Margin="0,10,10,0"/>
-                <TextBox HorizontalContentAlignment="Center" MaxLength="8" Background="Transparent" BorderThickness="0" IsReadOnly="True" Text="{Binding Sum, ValidatesOnDataErrors=True, TargetNullValue='', Mode=OneWay}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="16"/>
-                <StackPanel Grid.Column="1" Grid.Row="1">
-                    <TextBox MinWidth="50" Foreground="{Binding IsNumeric, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource BlackColor}}" Background="Transparent" MaxLength="8" HorizontalContentAlignment="Center" Text="{Binding Bias, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  BorderThickness="0" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="16"/>
-                    <Line StrokeDashArray="1,4" X1="15" Y1="0" X2="65" Y2="0" Stroke="Black" StrokeThickness="1.5"/>
-                </StackPanel>
-            </Grid>
+            <view:SumNodeView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:OutputNodeViewModel}">
-            <Grid Canvas.Left="350" Canvas.Top="200">
-                <Ellipse Height="40" Width="40">
-                    <Ellipse.Fill>
-                        <SolidColorBrush Color="{StaticResource NodeColor}" />
-                    </Ellipse.Fill>
-                </Ellipse>
-                <TextBlock Text="{Binding Output, ValidatesOnDataErrors=True, TargetNullValue='', Mode=OneWay}" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
-            </Grid>
+            <TextBox Text="{Binding Output, ValidatesOnDataErrors=True, TargetNullValue='', Mode=OneWay}"
+                     Style="{StaticResource OutputNode}" />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:WeightViewModel}">
-            <TextBox BorderThickness="0"  Foreground="{Binding IsNumeric, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource WhiteColor}}" Text="{Binding Weight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Background="Transparent">
-                <TextBox.Style>
-                    <Style TargetType="TextBox">
-                        <Style.Setters>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="TextBox">
-                                        <StackPanel Orientation="Horizontal">
-                                            <latex:FormulaControl VerticalAlignment="Bottom" Scale="15" Formula="{Binding Latex}" />
-                                            <TextBox MaxLength="9" CaretBrush="White" MinWidth="10" FontSize="15" Background="Transparent" BorderThickness="0" Foreground="{TemplateBinding Foreground}" Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </StackPanel>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style.Setters>
-                    </Style>
-                </TextBox.Style>
-            </TextBox>
+            <TextBox Foreground="{Binding IsNumeric, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource WhiteColor}}"
+                     Text="{Binding Weight, UpdateSourceTrigger=PropertyChanged}"
+                     Style="{StaticResource Weight}"/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:PlusNodeViewModel}">
             <Button IsEnabled="True" Content="+" Style="{StaticResource PlusButton}" Command="{Binding AddCommand}" />

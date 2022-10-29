@@ -179,7 +179,7 @@ namespace Perceptron
 
         void RedrawWeights()
         {
-            double left = GetColumnLeft(1) - 100;
+            double left = GetColumnLeft(1) - 80;
             for (int i = 0; i < Weights.Count; i++)
             {
                 Weights[i].Left = left;

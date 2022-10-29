@@ -8,7 +8,6 @@
                     <SolidColorBrush Color="{StaticResource NodeColor}" />
                 </Setter.Value>
             </Setter>
-            <Setter Property="Foreground" Value="Black" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">

@@ -1,0 +1,23 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style TargetType="TextBox"
+           x:Key="OutputNode">
+        <Style.Setters>
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid Canvas.Left="350" Canvas.Top="200">
+                            <Ellipse Height="40" Width="40">
+                                <Ellipse.Fill>
+                                    <SolidColorBrush Color="{StaticResource NodeColor}" />
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <TextBlock Text="{TemplateBinding Text}" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style.Setters>
+    </Style>
+</ResourceDictionary>

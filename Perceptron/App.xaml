@@ -3,11 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Perceptron"
              xmlns:view="clr-namespace:Perceptron.MVVM.View"
+             xmlns:converter="clr-namespace:Perceptron.MVVM.Converters"
              xmlns:viewModel="clr-namespace:Perceptron.MVVM.ViewModel"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <converter:BoolToColorConverter x:Key="BoolToColorConverter" />
+                </ResourceDictionary>
                 <ResourceDictionary Source="Themes/CustomeWindowTheme.xaml" ></ResourceDictionary>
                 <ResourceDictionary Source="Themes/Colors.xaml" ></ResourceDictionary>
                 <ResourceDictionary Source="Themes/MainMenuButtonTheme.xaml" ></ResourceDictionary>
@@ -16,6 +20,8 @@
                 <ResourceDictionary Source="Themes/TitleBarButtonsTheme.xaml" ></ResourceDictionary>
                 <ResourceDictionary Source="Themes/ExecutionButtonsTheme.xaml" ></ResourceDictionary>
                 <ResourceDictionary Source="Themes/PlusButtonTheme.xaml" ></ResourceDictionary>
+                <ResourceDictionary Source="Themes/OutputNodeTheme.xaml" ></ResourceDictionary>
+                <ResourceDictionary Source="Themes/WeightTheme.xaml" ></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type viewModel:DirectInputViewModel}">
