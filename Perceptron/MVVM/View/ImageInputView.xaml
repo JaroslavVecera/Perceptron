@@ -5,8 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Perceptron.MVVM.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+             d:DesignHeight="450" d:DesignWidth="800"
+             HorizontalAlignment="Center"
+             VerticalAlignment="Center"
+             Margin="0,0,100,0">
+    <TextBlock Text="Coming soon" FontSize="40" Foreground="Gray" HorizontalAlignment="Center" />
 </UserControl>

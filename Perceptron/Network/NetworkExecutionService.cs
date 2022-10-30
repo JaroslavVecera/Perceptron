@@ -11,6 +11,8 @@ namespace Perceptron.Network
         public Network Network { get; }
         float? Sum { get; set; }
         int? Output { get; set; }
+        public int DesiredOutput { get; set; }
+        public bool Training { get; set; }
 
         public NetworkExecutionService(Network network)
         {

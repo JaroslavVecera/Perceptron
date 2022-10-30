@@ -39,6 +39,9 @@
         <DataTemplate DataType="{x:Type viewModel:PlusNodeViewModel}">
             <Button IsEnabled="True" Content="+" Style="{StaticResource PlusButton}" Command="{Binding AddCommand}" />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:TrainingViewModel}">
+            <view:TrainingView HorizontalAlignment="Center" />
+        </DataTemplate>
     </UserControl.Resources>
     
     <Grid>
@@ -105,7 +108,7 @@
                            HorizontalAlignment="Center"
                            Foreground="White"
                            FontSize="16"/>
-                <TextBlock Text="Desired Output"
+                <TextBlock Text="Training"
                            Grid.Column="4"
                            Grid.Row="0"
                            VerticalAlignment="Center"

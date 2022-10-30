@@ -15,6 +15,7 @@ namespace Perceptron
         SumNodeViewModel SumNode { get; set; }
         OutputNodeViewModel OutputNode { get; set; }
         PlusNodeViewModel PlusButton { get; set; }
+        TrainingViewModel TrainingBox { get; set; }
         Network.NetworkExecutionService ExecutionService { get; set; }
         Network.Network Network { get; set; }
 
@@ -35,6 +36,7 @@ namespace Perceptron
             RebuildWeights();
             RebuildPlusButton();
             RebuildOutputNode();
+            RebuildTrainingBox();
             return RebuildGraphItems();
         }
 
@@ -46,9 +48,8 @@ namespace Perceptron
             RedrawEdges();
             RedrawWeights();
             RedrawPlusButton();
+            RedrawTrainingBox();
         }
-
-
 
         void RebuildInputNodes()
         {
@@ -128,6 +129,22 @@ namespace Perceptron
             PlusButton.AddInputNode += AddInputNode;
         }
 
+        void RebuildTrainingBox()
+        {
+            if (TrainingBox != null)
+            {
+                TrainingBox.OnSetOutput -= SetDesiredOutput;
+                TrainingBox.OnSetCoefficient -= SetTrainingCoefficient;
+                TrainingBox.OnGetCoefficient -= GetTrainingCoefficient;
+                TrainingBox.OnSetTraining -= SetTraining;
+            }
+            TrainingBox = new TrainingViewModel();
+            TrainingBox.OnSetOutput += SetDesiredOutput;
+            TrainingBox.OnSetCoefficient += SetTrainingCoefficient;
+            TrainingBox.OnGetCoefficient += GetTrainingCoefficient;
+            TrainingBox.OnSetTraining += SetTraining;
+        }
+
         List<PositionableViewModel> RebuildGraphItems()
         {
             List<PositionableViewModel> graphItems = new List<PositionableViewModel>();
@@ -138,6 +155,7 @@ namespace Perceptron
             graphItems.Add(OutputNode);
             Weights.ForEach(w => graphItems.Add(w));
             graphItems.Add(PlusButton);
+            graphItems.Add(TrainingBox);
             return graphItems;
         }
 
@@ -192,6 +210,13 @@ namespace Perceptron
             double left = InputNodes[0].Left;
             PlusButton.Left = left;
             PlusButton.Top = InputNodes.Last().Top + 60;
+        }
+
+        void RedrawTrainingBox()
+        {
+            double left = GetColumnLeft(4);
+            TrainingBox.Left = left - 55;
+            TrainingBox.Top = Height / 2 - 100;
         }
 
         double GetColumnLeft(double index)
@@ -268,6 +293,26 @@ namespace Perceptron
         public void NotifyOutput()
         {
             OutputNode.ForceNotify("Output");
+        }
+
+        public void SetDesiredOutput(int output)
+        {
+            ExecutionService.DesiredOutput = output;
+        }
+
+        public void SetTrainingCoefficient(float coeff)
+        {
+            Network.LearningCoeficient = coeff;
+        }
+
+        public float GetTrainingCoefficient()
+        {
+            return Network.LearningCoeficient;
+        }
+
+        public void SetTraining(bool val)
+        {
+            ExecutionService.Training = val;
         }
     }
 }

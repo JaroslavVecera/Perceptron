@@ -4,7 +4,7 @@
         <Style.Setters>
             <Setter Property="Background">
                 <Setter.Value>
-                    <SolidColorBrush Color="#f61515" />
+                    <SolidColorBrush Color="{StaticResource RedColor}" />
                 </Setter.Value>
             </Setter>
             <Setter Property="Template">

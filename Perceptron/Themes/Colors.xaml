@@ -13,5 +13,6 @@
     <Color x:Key="LighterGreenColor">#66ee77</Color>
     <Color x:Key="BlueColor">#154b97</Color>
     <Color x:Key="BlackColor">Black</Color>
-    <Color x:Key="WhiteColor">White</Color>
+    <Color x:Key="RedColor">#f61515</Color>
+    <Color x:Key="WhiteColor">White</Color> 
 </ResourceDictionary>
