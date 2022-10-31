@@ -11,7 +11,7 @@ namespace Perceptron.Network
         protected int _size;
         public int Size { get { return _size; } }
         float[] _inputArray;
-        public float[] InputArray { set { if (value.Count() == Size) _inputArray = value; else throw new InvalidOperationException(); } }
+        public float[] InputArray { set { _inputArray = value; _size = value.Length; } }
         public float[] Output { get { return _inputArray; } }
 
         public InputLayer(int size)

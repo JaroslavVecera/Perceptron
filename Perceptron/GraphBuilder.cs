@@ -9,7 +9,7 @@ namespace Perceptron
 {
     public class GraphBuilder
     {
-        List<InputViewModel> InputNodes { get; set; } = new List<InputViewModel>();
+        List<InputNodeViewModel> InputNodes { get; set; } = new List<InputNodeViewModel>();
         List<EdgeViewModel> Edges { get; set; } = new List<EdgeViewModel>();
         List<WeightViewModel> Weights { get; set; } = new List<WeightViewModel>();
         SumNodeViewModel SumNode { get; set; }
@@ -18,6 +18,9 @@ namespace Perceptron
         TrainingViewModel TrainingBox { get; set; }
         Network.NetworkExecutionService ExecutionService { get; set; }
         Network.Network Network { get; set; }
+        public event Action OnRedrawGraph;
+        public event Action OnRebuildGraph;
+        public int MaxInputNodes { get; set; } = 7;
 
         public double Width { get; set; } = 0;
         public double Height { get; set; } = 0;
@@ -51,6 +54,7 @@ namespace Perceptron
             RedrawTrainingBox();
         }
 
+        #region Rebuilding
         void RebuildInputNodes()
         {
             int count = Network.InputLayer.Size;
@@ -58,6 +62,8 @@ namespace Perceptron
             {
                 n.OnGetValue -= GetNodeInput;
                 n.OnSetValue -= SetNodeInput;
+                n.OnRemove -= RemoveInputNode;
+                n.OnGetCrossButtonEnabled -= GetCrossButtonEnabled;
             });
             InputNodes.Clear();
             for (int i = 0; i < count; i++)
@@ -66,6 +72,8 @@ namespace Perceptron
             {
                 n.OnGetValue += GetNodeInput;
                 n.OnSetValue += SetNodeInput;
+                n.OnRemove += RemoveInputNode;
+                n.OnGetCrossButtonEnabled += GetCrossButtonEnabled;
             });
             NotifyInputNodes();
         }
@@ -124,9 +132,13 @@ namespace Perceptron
         void RebuildPlusButton()
         {
             if (PlusButton != null)
+            {
                 PlusButton.AddInputNode -= AddInputNode;
+                PlusButton.GetIsPlusButtonEnabled -= GetIsPlusButtonEnabled;
+            }
             PlusButton = new PlusNodeViewModel();
             PlusButton.AddInputNode += AddInputNode;
+            PlusButton.GetIsPlusButtonEnabled += GetIsPlusButtonEnabled;
         }
 
         void RebuildTrainingBox()
@@ -143,6 +155,7 @@ namespace Perceptron
             TrainingBox.OnSetCoefficient += SetTrainingCoefficient;
             TrainingBox.OnGetCoefficient += GetTrainingCoefficient;
             TrainingBox.OnSetTraining += SetTraining;
+            NotifyTrainingBox();
         }
 
         List<PositionableViewModel> RebuildGraphItems()
@@ -158,7 +171,9 @@ namespace Perceptron
             graphItems.Add(TrainingBox);
             return graphItems;
         }
+        #endregion
 
+        #region Redrawing
         void RedrawInputNodes()
         {
             double left = GetColumnLeft(0);
@@ -223,20 +238,12 @@ namespace Perceptron
         {
             return Width / 5 * (index + 0.5);
         }
+        #endregion
 
-        void SetNodeInput(int index, float value)
-        {
-            Network.InputLayer[index] = value;
-        }
-
+        #region Getters
         float GetNodeInput(int index)
         {
             return Network.InputLayer[index];
-        }
-
-        void SetWeightInput(int index, float value)
-        {
-            Network.Weights[index, 0] = value;
         }
 
         float GetWeightInput(int index)
@@ -259,17 +266,85 @@ namespace Perceptron
             return Network.Biases[0];
         }
 
+        public float GetTrainingCoefficient()
+        {
+            return Network.LearningCoeficient;
+        }
+
+        public bool GetIsPlusButtonEnabled()
+        {
+            return Network.InputLayer.Size < MaxInputNodes;
+        }
+        #endregion
+
+        #region Setters
+        void SetNodeInput(int index, float value)
+        {
+            Rollback();
+            Network.InputLayer[index] = value;
+        }
+
+        void SetWeightInput(int index, float value)
+        {
+            Rollback();
+            Network.Weights[index, 0] = value;
+        }
+
         void SetBias(float value)
         {
+            Rollback();
             Network.Biases[0] = value;
         }
 
         void AddInputNode()
         {
-            // bacha na to, že při změně je třeba resetovat progres v executionService!!!
-            throw new NotImplementedException();
+            if (Network.InputLayer.Size == MaxInputNodes)
+                return;
+            Rollback();
+            ExecutionService.AddInputNode();
+            OnRebuildGraph?.Invoke();
+            if (Network.InputLayer.Size == MaxInputNodes)
+                PlusButton.OnEnabledChanged();
+            NotifyCrossButtons();
+        }
+        public void SetDesiredOutput(int output)
+        {
+            ExecutionService.DesiredOutput = output;
         }
 
+        public void SetTrainingCoefficient(float coeff)
+        {
+            Network.LearningCoeficient = coeff;
+        }
+
+        public void SetTraining(bool val)
+        {
+            ExecutionService.Training = val;
+        }
+
+        void Rollback()
+        {
+            //ExecutionService.Rollback();
+        }
+
+        void RemoveInputNode(int index)
+        {
+            if (Network.InputLayer.Size == 1)
+                return;
+            Rollback();
+            ExecutionService.RemoveInputNode(index);
+            OnRebuildGraph?.Invoke();
+            PlusButton.OnEnabledChanged();
+            NotifyCrossButtons();
+        }
+
+        bool GetCrossButtonEnabled()
+        {
+            return Network.InputLayer.Size > 1;
+        }
+        #endregion
+
+        #region Notifications
         public void NotifyInputNodes()
         {
             InputNodes.ForEach(n => n.OnValueChanged());
@@ -295,24 +370,16 @@ namespace Perceptron
             OutputNode.ForceNotify("Output");
         }
 
-        public void SetDesiredOutput(int output)
+        void NotifyCrossButtons()
         {
-            ExecutionService.DesiredOutput = output;
+            InputNodes.ForEach(n => n.OnCrossButtonEnabledChanged());
         }
 
-        public void SetTrainingCoefficient(float coeff)
+        void NotifyTrainingBox()
         {
-            Network.LearningCoeficient = coeff;
+            TrainingBox.OnValueChanged();
         }
 
-        public float GetTrainingCoefficient()
-        {
-            return Network.LearningCoeficient;
-        }
-
-        public void SetTraining(bool val)
-        {
-            ExecutionService.Training = val;
-        }
+        #endregion
     }
 }

@@ -14,6 +14,11 @@ namespace Perceptron.MVVM.ViewModel
         public event Action<int> OnSetOutput;
         public event Action<bool> OnSetTraining;
 
+        public TrainingViewModel()
+        {
+            ParseOutput("0");
+        }
+
         protected bool _isNumeric;
         public bool IsNumeric
         {
@@ -49,11 +54,12 @@ namespace Perceptron.MVVM.ViewModel
 
         public int DesiredOutput
         {
-            set { OnSetOutput.Invoke(value); }
+            set { OnSetOutput?.Invoke(value); }
         }
 
         public virtual void OnValueChanged()
         {
+            CoefficientInput = Coefficient.ToString();
             OnPropertyChanged("CoefficientInput");
         }
 
@@ -78,7 +84,7 @@ namespace Perceptron.MVVM.ViewModel
                 Coefficient = parsed;
         }
 
-        string _outputInput;
+        string _outputInput = "0";
         public string OutputInput
         {
             get { return _outputInput; }

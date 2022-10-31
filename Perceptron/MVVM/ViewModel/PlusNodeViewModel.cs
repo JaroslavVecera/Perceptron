@@ -10,8 +10,17 @@ namespace Perceptron.MVVM.ViewModel
     class PlusNodeViewModel : PositionableViewModel
     {
         public event Action AddInputNode;
+        public event Func<bool> GetIsPlusButtonEnabled;
 
         public RelayCommand AddCommand { get; set; }
+
+        public bool IsEnabled
+        { 
+            get
+            {
+                return GetIsPlusButtonEnabled.Invoke();
+            }
+        }
 
         public PlusNodeViewModel()
         {
@@ -24,6 +33,11 @@ namespace Perceptron.MVVM.ViewModel
             {
                 AddInputNode?.Invoke();
             });
+        }
+
+        public void OnEnabledChanged()
+        {
+            OnPropertyChanged("IsEnabled");
         }
     }
 }

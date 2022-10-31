@@ -39,9 +39,21 @@ namespace Perceptron.MVVM.ViewModel
         {
             Network = new Network.Network(5, 1, (float)0.5);
             ExecutionService = new NetworkExecutionService(Network);
-            Builder = new GraphBuilder(ExecutionService, Network);
+            CreateBuilder();
             RebuildGraph();
             InitializeCommands();
+        }
+
+        void CreateBuilder()
+        {
+            if (Builder != null)
+            {
+                Builder.OnRebuildGraph -= RebuildGraph;
+                Builder.OnRedrawGraph -= RedrawGraph;
+            }
+            Builder = new GraphBuilder(ExecutionService, Network);
+            Builder.OnRebuildGraph += RebuildGraph;
+            Builder.OnRedrawGraph += RedrawGraph;
         }
 
         void RebuildGraph()
@@ -89,7 +101,9 @@ namespace Perceptron.MVVM.ViewModel
                 ExecutionService = new NetworkExecutionService(Network);
                 double width = Builder.Width;
                 double height = Builder.Height;
-                Builder = new GraphBuilder(ExecutionService, Network) { Height = height, Width = width };
+                CreateBuilder();
+                Builder.Width = width;
+                Builder.Height = height;
                 RebuildGraph();
             });
             SaveCommand = new RelayCommand(o =>

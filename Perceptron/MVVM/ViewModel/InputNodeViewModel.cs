@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Perceptron.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,15 +9,30 @@ namespace Perceptron.MVVM.ViewModel
 {
     class InputNodeViewModel : InputViewModel
     {
+        public event Action<int> OnRemove;
+        public event Func<bool> OnGetCrossButtonEnabled;
+
+        public RelayCommand RemoveCommand { get; set; }
+
+        public bool CrossButtonEnabled { get { return OnGetCrossButtonEnabled.Invoke(); } }
+
         public InputNodeViewModel(int index) : base(index)
         {
-
+            RemoveCommand = new RelayCommand(o =>
+            {
+                OnRemove.Invoke(Index);
+            });
         }
 
         public override void OnValueChanged()
         {
             Input = Value.ToString();
             base.OnValueChanged();
+        }
+
+        public void OnCrossButtonEnabledChanged()
+        {
+            OnPropertyChanged("CrossButtonEnabled");
         }
 
         string _input;

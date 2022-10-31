@@ -37,7 +37,7 @@
                      Style="{StaticResource Weight}"/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:PlusNodeViewModel}">
-            <Button IsEnabled="True" Content="+" Style="{StaticResource PlusButton}" Command="{Binding AddCommand}" />
+            <Button IsEnabled="{Binding IsEnabled}" Content="+" Style="{StaticResource PlusButton}" Command="{Binding AddCommand}" />
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:TrainingViewModel}">
             <view:TrainingView HorizontalAlignment="Center" />
