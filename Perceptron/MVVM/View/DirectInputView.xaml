@@ -8,6 +8,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:viewModel="clr-namespace:Perceptron.MVVM.ViewModel"
              xmlns:converter="clr-namespace:Perceptron.MVVM.Converters"
+             xmlns:latex="clr-namespace:WpfMath.Controls;assembly=WpfMath"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -142,16 +143,16 @@
                 <StackPanel Grid.Column="0"
                             Orientation="Horizontal"
                             HorizontalAlignment="Center">
-                    <Button Content="Clear" Style="{StaticResource ClearButton}" Command="{Binding ClearCommand}"></Button>
-                    <Button Content="Randomize"  Style="{StaticResource RandomizeButton}" Command="{Binding RandomCommand}"></Button>
+                    <Button Content="Clear" Style="{StaticResource ClearButton}" Command="{Binding ClearCommand}" ToolTip="Clear"></Button>
+                    <Button Content="Randomize"  Style="{StaticResource RandomizeButton}" Command="{Binding RandomCommand}" ToolTip="Rendom input"></Button>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1"
                             Orientation="Horizontal"
                             HorizontalAlignment="Center">
-                    <Button IsEnabled="True" Content="Step1" Style="{StaticResource Step1Button}" Command="{Binding Step1Command}"></Button>
-                    <Button IsEnabled="True" Content="Step2" Style="{StaticResource Step2Button}" Command="{Binding Step2Command}"></Button>
-                    <Button IsEnabled="True" Content="Step3" Style="{StaticResource Step3Button}" Command="{Binding Step3Command}"></Button>
+                    <Button IsEnabled="True" Content="Step1" Style="{StaticResource Step1Button}" Command="{Binding Step1Command}" ToolTip="Step 1"></Button>
+                    <Button IsEnabled="True" Content="Step2" Style="{StaticResource Step2Button}" Command="{Binding Step2Command}" ToolTip="Step 2"></Button>
+                    <Button IsEnabled="True" Content="Step3" Style="{StaticResource Step3Button}" Command="{Binding Step3Command}" ToolTip="Step 3"></Button>
                 </StackPanel>
 
                 <StackPanel Grid.Column="2"
@@ -162,5 +163,18 @@
                 </StackPanel>
             </Grid>
         </Grid>
+
+        <TextBlock Text="Description"
+                           Grid.Column="1"
+                           VerticalAlignment="Top"
+                           HorizontalAlignment="Center"
+                           Foreground="White"
+                           FontSize="16"
+                   Margin="0,15,0,0"/>
+
+        <latex:FormulaControl Grid.Column="1"
+                              Formula="{Binding Description}"
+                              Foreground="White"
+                              Margin="20,250,0,0"/>
     </Grid>
 </UserControl>

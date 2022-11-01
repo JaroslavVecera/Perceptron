@@ -15,7 +15,10 @@ namespace Perceptron.MVVM.ViewModel
     {
         public RelayCommand SetWidthCommand { get; set; }
         public RelayCommand GraphRedrawCommand { get; set; }
+        public RelayCommand Step1Command { get; set; }
+        public RelayCommand Step2Command { get; set; }
         public RelayCommand Step3Command { get; set; }
+
         public RelayCommand ClearCommand { get; set; }
         public RelayCommand SaveCommand { get; set; }
         public RelayCommand LoadCommand { get; set; }
@@ -23,6 +26,8 @@ namespace Perceptron.MVVM.ViewModel
         Network.Network Network { get; set; }
         NetworkExecutionService ExecutionService { get; set; }
         GraphBuilder Builder { get; set; }
+        string _description = "";
+        public string Description { get { return _description; } set { _description = value; OnPropertyChanged(); } }
 
         List<PositionableViewModel> _graphItems;
         public List<PositionableViewModel> GraphItems
@@ -37,7 +42,7 @@ namespace Perceptron.MVVM.ViewModel
 
         public DirectInputViewModel()
         {
-            Network = new Network.Network(5, 1, (float)0.5);
+            Network = new Network.Network(2, 1, (float)0.5);
             ExecutionService = new NetworkExecutionService(Network);
             CreateBuilder();
             RebuildGraph();
@@ -50,10 +55,12 @@ namespace Perceptron.MVVM.ViewModel
             {
                 Builder.OnRebuildGraph -= RebuildGraph;
                 Builder.OnRedrawGraph -= RedrawGraph;
+                Builder.OnResetDescription -= ResetDescription;
             }
             Builder = new GraphBuilder(ExecutionService, Network);
             Builder.OnRebuildGraph += RebuildGraph;
             Builder.OnRedrawGraph += RedrawGraph;
+            Builder.OnResetDescription += ResetDescription;
         }
 
         void RebuildGraph()
@@ -83,14 +90,24 @@ namespace Perceptron.MVVM.ViewModel
                 Builder.Height = (double)o;
                 RedrawGraph();
             });
+            Step1Command = new RelayCommand(o =>
+            {
+                EnforceValidData(ExecutionService.Step1);
+            });
+            Step2Command = new RelayCommand(o =>
+            {
+                EnforceValidData(ExecutionService.Step2);
+            });
             Step3Command = new RelayCommand(o =>
             {
-                ExecutionService.Step3();
-                Builder.NotifyOutput();
-                Builder.NotifySumNode();
+                EnforceValidData(ExecutionService.Step3);
             });
             ClearCommand = new RelayCommand(o =>
             {
+                Network.Clear();
+                Builder.NotifyBiasNode();
+                Builder.NotifyWeights();
+                Builder.ResetProgress();
             });
             LoadCommand = new RelayCommand(o =>
             {
@@ -104,6 +121,7 @@ namespace Perceptron.MVVM.ViewModel
                 CreateBuilder();
                 Builder.Width = width;
                 Builder.Height = height;
+                Builder.ResetProgress();
                 RebuildGraph();
             });
             SaveCommand = new RelayCommand(o =>
@@ -115,7 +133,29 @@ namespace Perceptron.MVVM.ViewModel
                 Network.InitializeRandom();
                 Builder.NotifyBiasNode();
                 Builder.NotifyWeights();
+                Builder.ResetProgress();
             });
+        }
+
+        void EnforceValidData(Func<string> action)
+        {
+            if (Builder.AreValuesValid())
+            {
+                Description = action.Invoke();
+                Builder.NotifyAll();
+            }
+            else
+                ValuesErrorMessage();
+        }
+
+        void ResetDescription()
+        {
+            Description = "";
+        }
+
+        void ValuesErrorMessage()
+        {
+            throw new NotImplementedException();
         }
     }
 }

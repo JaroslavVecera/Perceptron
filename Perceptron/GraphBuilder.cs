@@ -20,6 +20,7 @@ namespace Perceptron
         Network.Network Network { get; set; }
         public event Action OnRedrawGraph;
         public event Action OnRebuildGraph;
+        public event Action OnResetDescription;
         public int MaxInputNodes { get; set; } = 7;
 
         public double Width { get; set; } = 0;
@@ -52,6 +53,12 @@ namespace Perceptron
             RedrawWeights();
             RedrawPlusButton();
             RedrawTrainingBox();
+        }
+
+        public void ResetProgress()
+        {
+            OnResetDescription.Invoke();
+            ExecutionService.ResetProgress();
         }
 
         #region Rebuilding
@@ -275,24 +282,30 @@ namespace Perceptron
         {
             return Network.InputLayer.Size < MaxInputNodes;
         }
+
+        public bool AreValuesValid()
+        {
+            bool inputs = InputNodes.All(i => i.IsNumeric);
+            bool weights = Weights.All(w => w.IsNumeric);
+            bool bias = SumNode.IsNumeric;
+            bool training = !ExecutionService.Training || (TrainingBox.IsNumeric && TrainingBox.IsValidOutput);
+            return inputs && weights && bias && training;
+        }
         #endregion
 
         #region Setters
         void SetNodeInput(int index, float value)
         {
-            Rollback();
             Network.InputLayer[index] = value;
         }
 
         void SetWeightInput(int index, float value)
         {
-            Rollback();
             Network.Weights[index, 0] = value;
         }
 
         void SetBias(float value)
         {
-            Rollback();
             Network.Biases[0] = value;
         }
 
@@ -300,12 +313,12 @@ namespace Perceptron
         {
             if (Network.InputLayer.Size == MaxInputNodes)
                 return;
-            Rollback();
             ExecutionService.AddInputNode();
             OnRebuildGraph?.Invoke();
             if (Network.InputLayer.Size == MaxInputNodes)
                 PlusButton.OnEnabledChanged();
             NotifyCrossButtons();
+            ResetProgress();
         }
         public void SetDesiredOutput(int output)
         {
@@ -322,20 +335,15 @@ namespace Perceptron
             ExecutionService.Training = val;
         }
 
-        void Rollback()
-        {
-            //ExecutionService.Rollback();
-        }
-
         void RemoveInputNode(int index)
         {
             if (Network.InputLayer.Size == 1)
                 return;
-            Rollback();
             ExecutionService.RemoveInputNode(index);
             OnRebuildGraph?.Invoke();
             PlusButton.OnEnabledChanged();
             NotifyCrossButtons();
+            ResetProgress();
         }
 
         bool GetCrossButtonEnabled()
@@ -345,6 +353,16 @@ namespace Perceptron
         #endregion
 
         #region Notifications
+        public void NotifyAll()
+        {
+            NotifyOutput();
+            NotifyInputNodes();
+            NotifyWeights();
+            NotifySumNode();
+            NotifyBiasNode();
+            NotifyTrainingBox();
+        }
+
         public void NotifyInputNodes()
         {
             InputNodes.ForEach(n => n.OnValueChanged());
