@@ -1,6 +1,7 @@
 ﻿using Perceptron.MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,16 +33,19 @@ namespace Perceptron
             Network = network;
         }
 
-        public List<PositionableViewModel> RebuildGraph()
+        public void RebuildGraph(ObservableCollection<PositionableViewModel> items)
         {
             RebuildInputNodes();
             RebuildEdges();
-            RebuildSumNode();
             RebuildWeights();
             RebuildPlusButton();
+            RebuildSumNode();
             RebuildOutputNode();
-            RebuildTrainingBox();
-            return RebuildGraphItems();
+            if (!items.Any())
+            {
+                RebuildTrainingBox();
+            }
+            RebuildGraphItems(items);
         }
 
         public void RedrawGraph()
@@ -165,18 +169,41 @@ namespace Perceptron
             NotifyTrainingBox();
         }
 
-        List<PositionableViewModel> RebuildGraphItems()
+        public TrainingViewModel GetTrainingBox()
         {
-            List<PositionableViewModel> graphItems = new List<PositionableViewModel>();
-            graphItems = new List<PositionableViewModel>();
+            TrainingBox.OnSetOutput -= SetDesiredOutput;
+            TrainingBox.OnSetCoefficient -= SetTrainingCoefficient;
+            TrainingBox.OnGetCoefficient -= GetTrainingCoefficient;
+            TrainingBox.OnSetTraining -= SetTraining;
+            return TrainingBox;
+        }
+
+        public void SetTrainingBox(TrainingViewModel trainingBox)
+        {
+            TrainingBox = trainingBox;
+            if (TrainingBox == null)
+                return;
+            TrainingBox.OnSetOutput += SetDesiredOutput;
+            TrainingBox.OnSetCoefficient += SetTrainingCoefficient;
+            TrainingBox.OnGetCoefficient += GetTrainingCoefficient;
+            TrainingBox.OnSetTraining += SetTraining;
+            NotifyTrainingBox();
+        }
+
+        void RebuildGraphItems(ObservableCollection<PositionableViewModel> graphItems)
+        {
+            var it = graphItems.Where(i => i != TrainingBox).ToList();
+            it.ForEach(i => graphItems.Remove(i));
+            if (!graphItems.Any())
+            {
+                graphItems.Add(TrainingBox);
+            }
             graphItems.Add(SumNode);
+            graphItems.Add(OutputNode);
             Edges.ForEach(e => graphItems.Add(e));
             InputNodes.ForEach(n => graphItems.Add(n));
-            graphItems.Add(OutputNode);
             Weights.ForEach(w => graphItems.Add(w));
             graphItems.Add(PlusButton);
-            graphItems.Add(TrainingBox);
-            return graphItems;
         }
         #endregion
 

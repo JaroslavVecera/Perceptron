@@ -30,8 +30,8 @@ namespace Perceptron.MVVM.ViewModel
         string _description = "";
         public string Description { get { return _description; } set { _description = value; OnPropertyChanged(); } }
 
-        List<PositionableViewModel> _graphItems;
-        public List<PositionableViewModel> GraphItems
+        ObservableCollection<PositionableViewModel> _graphItems = new ObservableCollection<PositionableViewModel>();
+        public ObservableCollection<PositionableViewModel> GraphItems
         {
             get { return _graphItems; }
             set
@@ -52,13 +52,16 @@ namespace Perceptron.MVVM.ViewModel
 
         void CreateBuilder()
         {
+            TrainingViewModel training = null;
             if (Builder != null)
             {
                 Builder.OnRebuildGraph -= RebuildGraph;
                 Builder.OnRedrawGraph -= RedrawGraph;
                 Builder.OnResetDescription -= ResetDescription;
+                training = Builder.GetTrainingBox();
             }
             Builder = new GraphBuilder(ExecutionService, Network);
+            Builder.SetTrainingBox(training);
             Builder.OnRebuildGraph += RebuildGraph;
             Builder.OnRedrawGraph += RedrawGraph;
             Builder.OnResetDescription += ResetDescription;
@@ -66,7 +69,7 @@ namespace Perceptron.MVVM.ViewModel
 
         void RebuildGraph()
         {
-            _graphItems = Builder.RebuildGraph();
+            Builder.RebuildGraph(_graphItems);
             RedrawGraph();
         }
 
@@ -116,14 +119,18 @@ namespace Perceptron.MVVM.ViewModel
                 if (network == null)
                     return;
                 Network = network;
+                bool oldTraining = ExecutionService.Training;
                 ExecutionService = new NetworkExecutionService(Network);
                 double width = Builder.Width;
                 double height = Builder.Height;
+                TrainingViewModel tb = null;
                 CreateBuilder();
                 Builder.Width = width;
                 Builder.Height = height;
                 Builder.ResetProgress();
+                ExecutionService.Training = oldTraining;
                 RebuildGraph();
+                ExecutionService.Training = oldTraining;
             });
             SaveCommand = new RelayCommand(o =>
             {

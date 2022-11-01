@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Perceptron.MVVM.ViewModel
 {
-    class TrainingViewModel : PositionableViewModel
+    public class TrainingViewModel : PositionableViewModel
     {
         public event Action<float> OnSetCoefficient;
         public event Func<float> OnGetCoefficient;
