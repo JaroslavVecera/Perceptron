@@ -63,6 +63,7 @@
                                      MaxWidth="70"
                                      Foreground="{TemplateBinding Foreground}"
                                      VerticalAlignment="Center"
+                                     MaxLength="6"
                                      TextAlignment="Center"
                                      BorderThickness="0"/>
                             <Button Height="15" Width="15" HorizontalAlignment="Right" VerticalAlignment="Top" Command="{Binding RemoveCommand}" IsEnabled="{Binding CrossButtonEnabled}">

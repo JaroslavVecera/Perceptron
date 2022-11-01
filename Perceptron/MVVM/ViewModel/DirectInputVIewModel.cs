@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Perceptron.MVVM.ViewModel
 {
@@ -155,7 +156,7 @@ namespace Perceptron.MVVM.ViewModel
 
         void ValuesErrorMessage()
         {
-            throw new NotImplementedException();
+            MessageBox.Show("Some values are invalid.", "Value error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }
