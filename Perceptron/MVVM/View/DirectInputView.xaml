@@ -10,13 +10,16 @@
              xmlns:converter="clr-namespace:Perceptron.MVVM.Converters"
              xmlns:latex="clr-namespace:WpfMath.Controls;assembly=WpfMath"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             Name="InputView">
     <UserControl.Resources>
         <converter:BoolToColorConverter x:Key="BoolToColorConverter" />
         <DataTemplate DataType="{x:Type viewModel:InputNodeViewModel}">
-            <TextBox Style="{StaticResource InputBox}"
+            <TextBox
+                Style="{StaticResource InputBox}"
                      Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}"
-                     Foreground="{Binding IsNumeric, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource BlackColor}}"/>
+                     Foreground="{Binding IsNumeric, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource BlackColor}}">
+            </TextBox>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:EdgeViewModel}">
             <view:CurvedEdge MaxArcRadius="12" StrokeThickness="2" Source="{Binding Source}" Sink="{Binding Sink}">

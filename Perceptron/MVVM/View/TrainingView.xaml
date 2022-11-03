@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Perceptron.MVVM.View"
+             xmlns:view="clr-namespace:Perceptron.MVVM.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Height="200"
@@ -42,7 +43,8 @@
                 </Style>
             </StackPanel.Style>
             <TextBlock Text="Training coefficient:" Foreground="White" HorizontalAlignment="Center" />
-            <TextBox Margin="0,5,0,20"
+            <view:NavigableTextBox Focused="{Binding FocusedCoefficient}" ArrowCommand="{Binding ArrowCommand1}"
+                     Margin="0,5,0,20"
                      BorderThickness="0"
                      Foreground="{Binding IsNumeric, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource WhiteColor}}"
                      Text="{Binding CoefficientInput, UpdateSourceTrigger=PropertyChanged}"
@@ -51,9 +53,10 @@
                 <TextBox.Background>
                     <SolidColorBrush Color="{StaticResource DarkerPrimaryColor2}" />
                 </TextBox.Background>
-            </TextBox>
+            </view:NavigableTextBox>
             <TextBlock Text="Desired output:" Foreground="White" HorizontalAlignment="Center" />
-            <TextBox Margin="0,5,0,20"
+            <view:NavigableTextBox Focused="{Binding FocusedOutput}" ArrowCommand="{Binding ArrowCommand2}"
+                     Margin="0,5,0,20"
                      BorderThickness="0"
                      Foreground="{Binding IsValidOutput, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource WhiteColor}}"
                      VerticalAlignment="Center"
@@ -64,7 +67,7 @@
                 <TextBox.Background>
                     <SolidColorBrush Color="{StaticResource DarkerPrimaryColor2}" />
                 </TextBox.Background>
-            </TextBox>
+            </view:NavigableTextBox>
         </StackPanel>
         <ToggleButton HorizontalAlignment="Center" Name="Button" Width="40"  IsChecked="{Binding IsEnabled, Mode=OneWayToSource}">
             <ToggleButton.Style>

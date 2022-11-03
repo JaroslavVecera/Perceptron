@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Perceptron.MVVM.View"
              xmlns:latex="clr-namespace:WpfMath.Controls;assembly=WpfMath"
+             xmlns:view="clr-namespace:Perceptron.MVVM.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Width="150" Height="150">
@@ -30,7 +31,7 @@
         <Path Data="M 0 30 L 15 30 L 15 0 L30 0" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Stroke="Black" StrokeThickness="2" Margin="0,10,10,0"/>
         <TextBox HorizontalContentAlignment="Center" MaxLength="8" Background="Transparent" BorderThickness="0" IsReadOnly="True" Text="{Binding Sum, ValidatesOnDataErrors=True, TargetNullValue='', Mode=OneWay}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="16"/>
         <StackPanel Grid.Column="1" Grid.Row="1">
-            <TextBox MinWidth="50" Foreground="{Binding IsNumeric, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource BlackColor}}" Background="Transparent" MaxLength="8" HorizontalContentAlignment="Center" Text="{Binding Bias, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  BorderThickness="0" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="16"/>
+            <view:NavigableTextBox ArrowCommand="{Binding ArrowCommand}" Focused="{Binding Focused}"  MinWidth="50" Foreground="{Binding IsNumeric, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource BlackColor}}" Background="Transparent" MaxLength="8" HorizontalContentAlignment="Center" Text="{Binding Bias, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  BorderThickness="0" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="16"/>
             <Line StrokeDashArray="1,4" X1="15" Y1="0" X2="65" Y2="0" Stroke="Black" StrokeThickness="1.5"/>
         </StackPanel>
     </Grid>

@@ -13,10 +13,25 @@ namespace Perceptron.MVVM.ViewModel
         public event Func<float> OnGetCoefficient;
         public event Action<int> OnSetOutput;
         public event Action<bool> OnSetTraining;
+        public RelayCommand<ArrowType> ArrowCommand1 { get; set; }
+        public RelayCommand<ArrowType> ArrowCommand2 { get; set; }
+        public event Action<ArrowType, int> Arrow;
+        bool _focusedCoefficient = false;
+        public bool FocusedCoefficient { get { return _focusedCoefficient; } set { _focusedCoefficient = value; OnPropertyChanged(); } }
+        bool _focusedOutput = false;
+        public bool FocusedOutput { get { return _focusedOutput; } set { _focusedOutput = value; OnPropertyChanged(); } }
 
         public TrainingViewModel()
         {
             ParseOutput("0");
+            ArrowCommand1 = new RelayCommand<ArrowType>(t =>
+            {
+                Arrow?.Invoke(t, 0);
+            });
+            ArrowCommand2 = new RelayCommand<ArrowType>(t =>
+            {
+                Arrow?.Invoke(t, 1);
+            });
         }
 
         protected bool _isNumeric;
@@ -102,6 +117,20 @@ namespace Perceptron.MVVM.ViewModel
                 IsValidOutput = isOutputValid;
             if (isOutputValid)
                 DesiredOutput = output == "0" ? 0 : 1;
+        }
+
+        public void Focus(int index)
+        {
+            if (index == 0)
+            {
+                FocusedCoefficient = false;
+                FocusedCoefficient = true;
+            }
+            else
+            {
+                FocusedOutput = false;
+                FocusedOutput = true;
+            }
         }
     }
 }

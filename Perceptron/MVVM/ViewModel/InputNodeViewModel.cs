@@ -18,6 +18,11 @@ namespace Perceptron.MVVM.ViewModel
 
         public InputNodeViewModel(int index) : base(index)
         {
+            InitializeCommands();
+        }
+
+        void InitializeCommands()
+        { 
             RemoveCommand = new RelayCommand(o =>
             {
                 OnRemove.Invoke(Index);

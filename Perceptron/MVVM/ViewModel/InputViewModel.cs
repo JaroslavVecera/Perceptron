@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Perceptron.Core;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -12,6 +13,10 @@ namespace Perceptron.MVVM.ViewModel
         protected int Index { get; } = 0;
         public event Action<int, float> OnSetValue;
         public event Func<int, float> OnGetValue;
+        public RelayCommand<ArrowType> ArrowCommand { get; set; }
+        public event Action<ArrowType, int> Arrow;
+        bool _focused = false;
+        public bool Focused { get { return _focused; } set { _focused = value; OnPropertyChanged(); } }
 
         protected bool _isNumeric;
         public bool IsNumeric
@@ -38,6 +43,10 @@ namespace Perceptron.MVVM.ViewModel
         public InputViewModel(int index)
         {
             Index = index;
+            ArrowCommand = new RelayCommand<ArrowType>(t =>
+            {
+                Arrow?.Invoke(t, Index);
+            });
         }
 
         protected void ParseValue(string value)
@@ -48,6 +57,12 @@ namespace Perceptron.MVVM.ViewModel
                 IsNumeric = canParse;
             if (canParse)
                 Value = parsed;
+        }
+
+        public void Focus()
+        {
+            Focused = false;
+            Focused = true;
         }
     }
 }

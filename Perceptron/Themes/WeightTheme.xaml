@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:latex="clr-namespace:WpfMath.Controls;assembly=WpfMath">
+                    xmlns:latex="clr-namespace:WpfMath.Controls;assembly=WpfMath"
+                    xmlns:view="clr-namespace:Perceptron.MVVM.View">
     <Style TargetType="TextBox"
            x:Key="Weight">
         <Style.Setters>
@@ -9,7 +10,7 @@
                     <ControlTemplate TargetType="TextBox">
                         <StackPanel Orientation="Horizontal">
                             <latex:FormulaControl Foreground="White" VerticalAlignment="Bottom" Scale="15" Formula="{Binding Latex}" />
-                            <TextBox MaxLength="9" CaretBrush="White" MinWidth="10" FontSize="15" Background="Transparent" BorderThickness="0" Foreground="{TemplateBinding Foreground}"
+                            <view:NavigableTextBox Focused="{Binding Focused}" ArrowCommand="{Binding ArrowCommand}" MaxLength="9" CaretBrush="White" MinWidth="10" FontSize="15" Background="Transparent" BorderThickness="0" Foreground="{TemplateBinding Foreground}"
                                                                  Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
                     </ControlTemplate>

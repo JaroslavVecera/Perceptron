@@ -1,4 +1,5 @@
-﻿using Perceptron.MVVM.ViewModel;
+﻿using Perceptron.MVVM;
+using Perceptron.MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,6 +23,8 @@ namespace Perceptron
         public event Action OnRedrawGraph;
         public event Action OnRebuildGraph;
         public event Action OnResetDescription;
+        int LastNodeIndex { get; set; } = 0;
+        int LastTrainingIndex { get; set; } = 0;
         public int MaxInputNodes { get; set; } = 7;
 
         public double Width { get; set; } = 0;
@@ -75,6 +78,7 @@ namespace Perceptron
                 n.OnSetValue -= SetNodeInput;
                 n.OnRemove -= RemoveInputNode;
                 n.OnGetCrossButtonEnabled -= GetCrossButtonEnabled;
+                n.Arrow -= InputNodeArrow;
             });
             InputNodes.Clear();
             for (int i = 0; i < count; i++)
@@ -85,6 +89,7 @@ namespace Perceptron
                 n.OnSetValue += SetNodeInput;
                 n.OnRemove += RemoveInputNode;
                 n.OnGetCrossButtonEnabled += GetCrossButtonEnabled;
+                n.Arrow += InputNodeArrow;
             });
             NotifyInputNodes();
         }
@@ -104,11 +109,13 @@ namespace Perceptron
                 SumNode.GetSum -= GetSum;
                 SumNode.OnGetBias -= GetBias;
                 SumNode.OnSetBias -= SetBias;
+                SumNode.Arrow -= SumNodeArrow;
             }
             SumNode = new SumNodeViewModel();
             SumNode.GetSum += GetSum;
             SumNode.OnGetBias += GetBias;
             SumNode.OnSetBias += SetBias;
+            SumNode.Arrow += SumNodeArrow;
             NotifySumNode();
             NotifyBiasNode();
         }
@@ -120,6 +127,7 @@ namespace Perceptron
             {
                 n.OnGetValue -= GetWeightInput;
                 n.OnSetValue -= SetWeightInput;
+                n.Arrow -= WeightArrow;
             });
             Weights.Clear();
             for (int i = 0; i < count; i++)
@@ -128,6 +136,7 @@ namespace Perceptron
             {
                 n.OnGetValue += GetWeightInput;
                 n.OnSetValue += SetWeightInput;
+                n.Arrow += WeightArrow;
             });
             NotifyWeights();
         }
@@ -160,12 +169,14 @@ namespace Perceptron
                 TrainingBox.OnSetCoefficient -= SetTrainingCoefficient;
                 TrainingBox.OnGetCoefficient -= GetTrainingCoefficient;
                 TrainingBox.OnSetTraining -= SetTraining;
+                TrainingBox.Arrow -= TrainingArrow;
             }
             TrainingBox = new TrainingViewModel();
             TrainingBox.OnSetOutput += SetDesiredOutput;
             TrainingBox.OnSetCoefficient += SetTrainingCoefficient;
             TrainingBox.OnGetCoefficient += GetTrainingCoefficient;
             TrainingBox.OnSetTraining += SetTraining;
+            TrainingBox.Arrow += TrainingArrow;
             NotifyTrainingBox();
         }
 
@@ -376,6 +387,51 @@ namespace Perceptron
         bool GetCrossButtonEnabled()
         {
             return Network.InputLayer.Size > 1;
+        }
+
+        void InputNodeArrow(ArrowType type, int index)
+        {
+            LastNodeIndex = index;
+            if (type == ArrowType.Down && index < InputNodes.Count - 1)
+                InputNodes[index + 1].Focus();
+            else if (type == ArrowType.Up && index > 0)
+                InputNodes[index - 1].Focus();
+            else if (type == ArrowType.Right)
+                Weights[index].Focus();
+        }
+
+        void WeightArrow(ArrowType type, int index)
+        {
+            LastNodeIndex = index;
+            if (type == ArrowType.Down && index < InputNodes.Count - 1)
+                Weights[index + 1].Focus();
+            else if (type == ArrowType.Up && index > 0)
+                Weights[index - 1].Focus();
+            else if (type == ArrowType.Left)
+                InputNodes[index].Focus();
+            else
+                SumNode.Focus();
+        }
+
+        void SumNodeArrow(ArrowType type)
+        {
+            LastNodeIndex = Math.Min(LastNodeIndex, Weights.Count - 1);
+            if (type == ArrowType.Left)
+                Weights[LastNodeIndex].Focus();
+            else if (type == ArrowType.Right && ExecutionService.Training)
+                TrainingBox.Focus(LastTrainingIndex);
+                return;
+        }
+
+        void TrainingArrow(ArrowType type, int index)
+        {
+            LastTrainingIndex = index;
+            if (type == ArrowType.Left)
+                SumNode.Focus();
+            else if (type == ArrowType.Up)
+                TrainingBox.Focus(0);
+            else if (type == ArrowType.Down)
+                TrainingBox.Focus(1);
         }
         #endregion
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Perceptron.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,18 @@ namespace Perceptron.MVVM.ViewModel
         public event Func<float?> GetSum;
         public event Action<float> OnSetBias;
         public event Func<float> OnGetBias;
+        public RelayCommand<ArrowType> ArrowCommand { get; set; }
+        public event Action<ArrowType> Arrow;
+        bool _focused = false;
+        public bool Focused { get { return _focused; } set { _focused = value; OnPropertyChanged(); } }
+
+        public SumNodeViewModel()
+        {
+            ArrowCommand = new RelayCommand<ArrowType>(t =>
+            {
+                Arrow?.Invoke(t);
+            });
+        }
 
         protected bool _isNumeric;
         public bool IsNumeric
@@ -65,6 +78,12 @@ namespace Perceptron.MVVM.ViewModel
                     res = (float)Math.Round(res.Value, 4);
                 return res;
             }
+        }
+
+        public void Focus()
+        {
+            Focused = false;
+            Focused = true;
         }
     }
 }
