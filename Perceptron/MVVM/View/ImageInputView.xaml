@@ -3,11 +3,81 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Perceptron.MVVM.View"
+             xmlns:view="clr-namespace:Perceptron.MVVM.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-             HorizontalAlignment="Center"
-             VerticalAlignment="Center"
-             Margin="0,0,100,0">
-    <TextBlock Text="Coming soon" FontSize="40" Foreground="Gray" HorizontalAlignment="Center" />
+             xmlns:latex="clr-namespace:WpfMath.Controls;assembly=WpfMath"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Input"
+                           Grid.Column="0"
+                           Grid.Row="0"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Foreground="White"
+                           FontSize="16"/>
+            <TextBlock Text="Bias"
+                           Grid.Column="2"
+                           Grid.Row="0"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Foreground="White"
+                           FontSize="16"/>
+            <TextBlock Text="Output"
+                           Grid.Column="3"
+                           Grid.Row="0"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Foreground="White"
+                           FontSize="16"/>
+            <TextBlock Text="Training"
+                           Grid.Column="4"
+                           Grid.Row="0"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Foreground="White"
+                           FontSize="16"/>
+
+            <Canvas Grid.Column="0" Grid.ColumnSpan="4"
+                    Grid.Row="1"
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                <StackPanel Canvas.Left="50" Canvas.Top="100">
+                    <Image Source="C:\Users\Jarek\source\repos\Perceptron\data\test.png" Width="200" Height="200" />
+                    <StackPanel Orientation="Horizontal">
+                        <Button>Load Picture</Button>
+                        <Button>Load MNIST</Button>
+                    </StackPanel>
+                </StackPanel>
+
+                <latex:FormulaControl Canvas.Left="300" Canvas.Top="160" Formula="\{" Scale="80" Foreground="White"/>
+
+                <TextBox Style="{StaticResource InputBox}" Canvas.Left="400" Canvas.Top="180"/>
+                <Line X1="400" Y1="200" X2="500" Y2="200" Stroke="White" StrokeThickness="2"/>
+                <TextBox Style="{StaticResource OutputNode}" Canvas.Left="480" Canvas.Top="180"/>
+
+                <view:TrainingView Canvas.Top="100" Canvas.Left="600"/>
+            </Canvas>
+        </Grid>
+        <TextBlock Foreground="White" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">Description</TextBlock>
+    </Grid>
 </UserControl>

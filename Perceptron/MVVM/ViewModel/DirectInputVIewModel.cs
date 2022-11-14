@@ -26,7 +26,7 @@ namespace Perceptron.MVVM.ViewModel
         public RelayCommand RandomCommand { get; set; }
         Network.Network Network { get; set; }
         NetworkExecutionService ExecutionService { get; set; }
-        GraphBuilder Builder { get; set; }
+        DirectInputGraphBuilder Builder { get; set; }
         string _description = "";
         public string Description { get { return _description; } set { _description = value; OnPropertyChanged(); } }
 
@@ -60,7 +60,7 @@ namespace Perceptron.MVVM.ViewModel
                 Builder.OnResetDescription -= ResetDescription;
                 training = Builder.GetTrainingBox();
             }
-            Builder = new GraphBuilder(ExecutionService, Network);
+            Builder = new DirectInputGraphBuilder(ExecutionService, Network);
             Builder.SetTrainingBox(training);
             Builder.OnRebuildGraph += RebuildGraph;
             Builder.OnRedrawGraph += RedrawGraph;

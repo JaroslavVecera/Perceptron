@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Perceptron
 {
-    public class GraphBuilder
+    public class DirectInputGraphBuilder
     {
         List<InputNodeViewModel> InputNodes { get; set; } = new List<InputNodeViewModel>();
         List<EdgeViewModel> Edges { get; set; } = new List<EdgeViewModel>();
@@ -30,7 +30,7 @@ namespace Perceptron
         public double Width { get; set; } = 0;
         public double Height { get; set; } = 0;
 
-        public GraphBuilder(Network.NetworkExecutionService executionService, Network.Network network)
+        public DirectInputGraphBuilder(Network.NetworkExecutionService executionService, Network.Network network)
         {
             ExecutionService = executionService;
             Network = network;
