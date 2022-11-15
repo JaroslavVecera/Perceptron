@@ -37,7 +37,7 @@ namespace Perceptron.Network
             var buffer = new float[pixels.Length / 4];
 
             for (int index = 0; index < buffer.Length; index++)
-                buffer[index] = 255 - (float)(pixels[index * 4] + pixels[index * 4 + 1] + pixels[index * 4 + 2]) / 3;
+                buffer[index] = (float)(pixels[index * 4] + pixels[index * 4 + 1] + pixels[index * 4 + 2]) / 3;
             return buffer;
         }
     }

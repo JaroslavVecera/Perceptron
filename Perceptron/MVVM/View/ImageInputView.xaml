@@ -28,7 +28,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="Input"
+            <TextBlock Text="Input (28x28 picture)"
                            Grid.Column="0"
                            Grid.Row="0"
                            VerticalAlignment="Center"
@@ -62,10 +62,10 @@
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
                 <StackPanel Canvas.Left="50" Canvas.Top="100">
-                    <Image Source="C:\Users\Jarek\source\repos\Perceptron\data\test.png" Width="200" Height="200" />
+                    <Image Source="{Binding Image}" Width="200" Height="200" RenderOptions.BitmapScalingMode="NearestNeighbor" />
                     <StackPanel Orientation="Horizontal">
-                        <Button>Load Picture</Button>
-                        <Button>Load MNIST</Button>
+                        <Button Command="{Binding PictureCommand}">Load Picture</Button>
+                        <Button Command="{Binding NextCommand}">Load MNIST</Button>
                     </StackPanel>
                 </StackPanel>
 
