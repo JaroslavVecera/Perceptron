@@ -17,7 +17,7 @@ namespace Perceptron.MVVM.ViewModel
         public RelayCommand SetWidthCommand { get; set; }
         public RelayCommand GraphRedrawCommand { get; set; }
         Network.Network Network { get; set; }
-        NetworkExecutionService ExecutionService { get; set; }
+        NetworkExecutionServiceImageInput ExecutionService { get; set; }
         ImageInputGraphBuilder Builder { get; set; }
 
         ObservableCollection<PositionableViewModel> _graphItems = new ObservableCollection<PositionableViewModel>();
@@ -34,8 +34,8 @@ namespace Perceptron.MVVM.ViewModel
 
         public ImageInputViewModel()
         {
-            Network = new Network.Network(28 * 28, 10, (float)0.5);
-            ExecutionService = new NetworkExecutionService(Network);
+            Network = new Network.Network(28 * 28, 5, (float)0.5);
+            ExecutionService = new NetworkExecutionServiceImageInput(Network);
             CreateBuilder();
             RebuildGraph();
             InitializeCommands();

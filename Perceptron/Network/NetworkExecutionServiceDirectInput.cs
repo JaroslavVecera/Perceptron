@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Perceptron.Network
 {
-    public class NetworkExecutionService
+    public class NetworkExecutionServiceDirectInput
     {
         public Network Network { get; }
         float? Sum { get; set; }
@@ -15,7 +15,7 @@ namespace Perceptron.Network
         public bool Training { get; set; }
         ExecutionState State { get; set; } = new ExecutionState() { Group = ExecutionStateGroup.Normal };
 
-        public NetworkExecutionService(Network network)
+        public NetworkExecutionServiceDirectInput(Network network)
         {
             Network = network;
         }

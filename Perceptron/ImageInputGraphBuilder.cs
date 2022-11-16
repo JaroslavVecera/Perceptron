@@ -17,17 +17,17 @@ namespace Perceptron
         List<EdgeViewModel> Edges { get; set; } = new List<EdgeViewModel>();
         List<OutputNodeViewModel> OutputNodes { get; set; } = new List<OutputNodeViewModel>();
         PlusNodeViewModel PlusButton { get; set; }
-        Network.NetworkExecutionService ExecutionService { get; set; }
+        Network.NetworkExecutionServiceImageInput ExecutionService { get; set; }
         Network.Network Network { get; set; }
         public event Action OnRedrawGraph;
         public event Action OnRebuildGraph;
         public event Action OnResetDescription;
-        public int MaxInputNodes { get; set; } = 10;
+        public int MaxBiasNodes { get; set; } = 10;
 
         public double Width { get; set; } = 0;
         public double Height { get; set; } = 0;
 
-        public ImageInputGraphBuilder(Network.NetworkExecutionService executionService, Network.Network network)
+        public ImageInputGraphBuilder(Network.NetworkExecutionServiceImageInput executionService, Network.Network network)
         {
             ExecutionService = executionService;
             Network = network;
@@ -61,7 +61,14 @@ namespace Perceptron
 
         void RebuildStatic()
         {
-            ImageInputBox = new ImageInputBoxViewModel();
+            if (ImageInputBox == null)
+                ImageInputBox = new ImageInputBoxViewModel();
+            else
+            {
+                var image = ImageInputBox.Image;
+                var testSet = ImageInputBox.TestSet;
+                ImageInputBox = new ImageInputBoxViewModel(testSet, image);
+            }
             Brace = new BraceViewModel();
         }
 
@@ -214,7 +221,7 @@ namespace Perceptron
 
         public bool GetIsPlusButtonEnabled()
         {
-            return Network.InputLayer.Size < MaxInputNodes;
+            return Network.Neurons < MaxBiasNodes;
         }
 
         public bool AreValuesValid()
@@ -231,27 +238,26 @@ namespace Perceptron
 
         void AddBiasNode()
         {
-            /*
-            if (Network.InputLayer.Size == MaxInputNodes)
+            if (Network.Neurons == MaxBiasNodes)
                 return;
-            ExecutionService.AddInputNode();
+            ExecutionService.AddBiasNode();
             OnRebuildGraph?.Invoke();
-            if (Network.InputLayer.Size == MaxInputNodes)
+            if (Network.Neurons == MaxBiasNodes)
                 PlusButton.OnEnabledChanged();
             NotifyCrossButtons();
-            ResetProgress();*/
+            ResetProgress();
         }
 
 
         void RemoveBiasNode(int index)
-        {/*
-            if (Network.InputLayer.Size == 1)
+        {
+            if (Network.Neurons == 1)
                 return;
-            ExecutionService.RemoveInputNode(index);
+            ExecutionService.RemoveBiasNode(index);
             OnRebuildGraph?.Invoke();
             PlusButton.OnEnabledChanged();
             NotifyCrossButtons();
-            ResetProgress();*/
+            ResetProgress();
         }
 
         public void SetDesiredOutput(int output)
@@ -266,7 +272,7 @@ namespace Perceptron
 
         public void SetTraining(bool val)
         {
-            ExecutionService.Training = val;
+            //ExecutionService.Training = val;
         }
         private void BiasNodeArrow(ArrowType arg1, int arg2)
         {

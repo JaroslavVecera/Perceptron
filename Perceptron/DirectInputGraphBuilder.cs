@@ -18,7 +18,7 @@ namespace Perceptron
         OutputNodeViewModel OutputNode { get; set; }
         PlusNodeViewModel PlusButton { get; set; }
         TrainingViewModel TrainingBox { get; set; }
-        Network.NetworkExecutionService ExecutionService { get; set; }
+        Network.NetworkExecutionServiceDirectInput ExecutionService { get; set; }
         Network.Network Network { get; set; }
         public event Action OnRedrawGraph;
         public event Action OnRebuildGraph;
@@ -30,7 +30,7 @@ namespace Perceptron
         public double Width { get; set; } = 0;
         public double Height { get; set; } = 0;
 
-        public DirectInputGraphBuilder(Network.NetworkExecutionService executionService, Network.Network network)
+        public DirectInputGraphBuilder(Network.NetworkExecutionServiceDirectInput executionService, Network.Network network)
         {
             ExecutionService = executionService;
             Network = network;

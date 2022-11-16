@@ -26,11 +26,19 @@ namespace Perceptron.MVVM.ViewModel
 
         public RelayCommand NextCommand { get; set; }
         public RelayCommand PictureCommand { get; set; }
-        TestSet TestSet { get; set; }
+        public TestSet TestSet { get; set; }
 
         public ImageInputBoxViewModel()
         {
             Test();
+            InitializeCommands();
+        }
+
+        public ImageInputBoxViewModel(TestSet testSet, BitmapSource image)
+        {
+            TestSet = testSet;
+            Image = image;
+            InitializeCommands();
         }
 
         void Test()
@@ -38,6 +46,10 @@ namespace Perceptron.MVVM.ViewModel
             TestSet = new TestSet();
             TestSet.LoadTestMnist(@"C:\Users\Jarek\source\repos\Perceptron\data", true);
             Next();
+        }
+
+        void InitializeCommands()
+        { 
             NextCommand = new RelayCommand(o =>
             {
                 Next();
