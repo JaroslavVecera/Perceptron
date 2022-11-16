@@ -6,13 +6,18 @@ using System.Threading.Tasks;
 
 namespace Perceptron.MVVM.ViewModel
 {
-    class OutputNodeViewModel : PositionableViewModel
+    class OutputNodeViewModel : InputViewModel
     {
-        public event Func<int?> GetOutput;
+        public event Func<int, int?> GetOutput;
+
+        public OutputNodeViewModel(int index) : base(index)
+        {
+
+        }
 
         public int? Output
         {
-            get { return GetOutput?.Invoke(); }
+            get { return GetOutput?.Invoke(Index); }
         }
     }
 }

@@ -3,6 +3,7 @@ using Perceptron.Core;
 using Perceptron.Network;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,56 +14,75 @@ namespace Perceptron.MVVM.ViewModel
 {
     class ImageInputViewModel : ObservableObject
     {
-        BitmapSource _bitmapSource;
-        public BitmapSource Image
-        { 
-            get { return _bitmapSource; }
+        public RelayCommand SetWidthCommand { get; set; }
+        public RelayCommand GraphRedrawCommand { get; set; }
+        Network.Network Network { get; set; }
+        NetworkExecutionService ExecutionService { get; set; }
+        ImageInputGraphBuilder Builder { get; set; }
+
+        ObservableCollection<PositionableViewModel> _graphItems = new ObservableCollection<PositionableViewModel>();
+        public ObservableCollection<PositionableViewModel> GraphItems
+        {
+            get { return _graphItems; }
             set
             {
-                _bitmapSource = value;
+                _graphItems = value;
                 OnPropertyChanged();
             }
         }
-        int ImageIndex { get; set; }
-
-        public RelayCommand NextCommand { get; set; }
-        public RelayCommand PictureCommand { get; set; }
-        TestSet TestSet { get; set; }
 
 
         public ImageInputViewModel()
         {
-            TestSet = new TestSet();
-            TestSet.LoadTestMnist(@"C:\Users\Jarek\source\repos\Perceptron\data", true);
-            Next();
-            NextCommand = new RelayCommand(o =>
-            {
-                Next();
-            });
-            PictureCommand = new RelayCommand(o =>
-            {
-                OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.DefaultExt = ".png";
-                openFileDialog.Filter = "Images (.png)|*.png";
-                openFileDialog.CheckFileExists = true;
-                openFileDialog.CheckPathExists = true;
-                if (openFileDialog.ShowDialog() == true)
-                {
-                    float[] arr = MnistLikeImageReader.ImageToArray(openFileDialog.FileName);
-                    SetPictureArray(arr);
-                }
-            });
+            Network = new Network.Network(28 * 28, 10, (float)0.5);
+            ExecutionService = new NetworkExecutionService(Network);
+            CreateBuilder();
+            RebuildGraph();
+            InitializeCommands();
         }
 
-        void Next()
+        void CreateBuilder()
         {
-            SetPictureArray(TestSet.Tests[ImageIndex++].input);
+            TrainingViewModel training = null;
+            if (Builder != null)
+            {
+                Builder.OnRebuildGraph -= RebuildGraph;
+                Builder.OnRedrawGraph -= RedrawGraph;
+                //training = Builder.GetTrainingBox();
+            }
+            Builder = new ImageInputGraphBuilder(ExecutionService, Network);
+            //Builder.SetTrainingBox(training);
+            Builder.OnRebuildGraph += RebuildGraph;
+            Builder.OnRedrawGraph += RedrawGraph;
         }
 
-        void SetPictureArray(float[] array)
+        void RebuildGraph()
         {
-            byte[] arr = array.Select(f => (byte)f).ToArray();
-            Image = BitmapSource.Create(28, 28, 300, 300, PixelFormats.Indexed8, BitmapPalettes.Gray256, arr, 28);
+            Builder.RebuildGraph(_graphItems);
+            RedrawGraph();
+        }
+
+        void RedrawGraph()
+        {
+            Builder.RedrawGraph();
+            OnPropertyChanged("GraphItems");
+        }
+
+        void InitializeCommands()
+        {
+            SetWidthCommand = new RelayCommand(o =>
+            {
+                if (o is not double)
+                    return;
+                Builder.Width = (double)o;
+            });
+            GraphRedrawCommand = new RelayCommand(o =>
+            {
+                if (o is not double)
+                    return;
+                Builder.Height = (double)o;
+                RedrawGraph();
+            });
         }
     }
 }

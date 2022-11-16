@@ -24,5 +24,11 @@ namespace Perceptron.MVVM.View
         {
             InitializeComponent();
         }
+
+        private void test1_Changed(object sender, EventArgs e)
+        {
+            test1.Command?.Execute(Graph.ActualWidth);
+            test2.Command?.Execute(Graph.ActualHeight);
+        }
     }
 }

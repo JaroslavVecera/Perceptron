@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -17,6 +19,8 @@ namespace Perceptron.Network
 
             int width = source.PixelWidth;
             int height = source.PixelHeight;
+            if (width != 28 || height != 28)
+                throw new InvalidOperationException();
             Int32 stride = (width * source.Format.BitsPerPixel + 7) / 8;
             byte[] result = new byte[width * height * 4];
 
@@ -39,6 +43,29 @@ namespace Perceptron.Network
             for (int index = 0; index < buffer.Length; index++)
                 buffer[index] = (float)(pixels[index * 4] + pixels[index * 4 + 1] + pixels[index * 4 + 2]) / 3;
             return buffer;
+        }
+
+        public static float[] LoadImage()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.DefaultExt = ".png";
+            openFileDialog.Filter = "Images (.png)|*.png";
+            openFileDialog.CheckFileExists = true;
+            openFileDialog.CheckPathExists = true;
+            if (openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    float[] arr = ImageToArray(openFileDialog.FileName);
+                    return arr;
+                }
+                catch(Exception e)
+                {
+                    MessageBox.Show("Bad image.", "Image error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return null;
+                }
+            }
+            return null;
         }
     }
 }

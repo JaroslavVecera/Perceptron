@@ -145,7 +145,7 @@ namespace Perceptron
         {
             if (OutputNode != null)
                 OutputNode.GetOutput -= GetOutput;
-            OutputNode = new OutputNodeViewModel();
+            OutputNode = new OutputNodeViewModel(0);
             OutputNode.GetOutput += GetOutput;
         }
 
@@ -301,7 +301,7 @@ namespace Perceptron
             return ExecutionService.GetSum();
         }
 
-        int? GetOutput()
+        int? GetOutput(int index)
         {
             return ExecutionService.GetOutput();
         }

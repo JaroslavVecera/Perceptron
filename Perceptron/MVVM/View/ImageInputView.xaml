@@ -6,26 +6,69 @@
              xmlns:view="clr-namespace:Perceptron.MVVM.View"
              mc:Ignorable="d" 
              xmlns:latex="clr-namespace:WpfMath.Controls;assembly=WpfMath"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:viewModel="clr-namespace:Perceptron.MVVM.ViewModel"
+             xmlns:converter="clr-namespace:Perceptron.MVVM.Converters"
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <converter:BoolToColorConverter x:Key="BoolToColorConverter" />
+        <DataTemplate DataType="{x:Type viewModel:InputNodeViewModel}">
+            <TextBox
+                Style="{StaticResource InputBox}"
+                     Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}"
+                     Foreground="{Binding IsNumeric, Converter={StaticResource BoolToColorConverter}, ConverterParameter={StaticResource BlackColor}}">
+            </TextBox>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:EdgeViewModel}">
+            <view:CurvedEdge MaxArcRadius="12" StrokeThickness="2" Source="{Binding Source}" Sink="{Binding Sink}">
+                <view:CurvedEdge.Stroke>
+                    <SolidColorBrush Color="{StaticResource NodeColor}" />
+                </view:CurvedEdge.Stroke>
+            </view:CurvedEdge>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:OutputNodeViewModel}">
+            <TextBox Text="{Binding Output, ValidatesOnDataErrors=True, TargetNullValue='', Mode=OneWay}"
+                     Style="{StaticResource OutputNode}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:PlusNodeViewModel}">
+            <Button IsEnabled="{Binding IsEnabled}" Content="+" Style="{StaticResource PlusButton}" Command="{Binding AddCommand}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:TrainingViewModel}">
+            <view:TrainingView HorizontalAlignment="Center" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:ImageInputBoxViewModel}">
+            <StackPanel Canvas.Left="50" Canvas.Top="100">
+                <Image Source="{Binding Image}" Width="200" Height="200" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                <StackPanel Orientation="Horizontal">
+                    <Button Command="{Binding PictureCommand}">Load Picture</Button>
+                    <Button Command="{Binding NextCommand}">Load MNIST</Button>
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:BraceViewModel}">
+            <latex:FormulaControl Canvas.Left="300" Canvas.Top="160" Formula="\{" Scale="80" Foreground="White"/>
+        </DataTemplate>
+    </UserControl.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-
 
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="50" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="50" />
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
 
             <TextBlock Text="Input (28x28 picture)"
@@ -57,27 +100,31 @@
                            Foreground="White"
                            FontSize="16"/>
 
-            <Canvas Grid.Column="0" Grid.ColumnSpan="4"
+            <ItemsControl  Grid.Column="0"
                     Grid.Row="1"
-                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-
-                <StackPanel Canvas.Left="50" Canvas.Top="100">
-                    <Image Source="{Binding Image}" Width="200" Height="200" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-                    <StackPanel Orientation="Horizontal">
-                        <Button Command="{Binding PictureCommand}">Load Picture</Button>
-                        <Button Command="{Binding NextCommand}">Load MNIST</Button>
-                    </StackPanel>
-                </StackPanel>
-
-                <latex:FormulaControl Canvas.Left="300" Canvas.Top="160" Formula="\{" Scale="80" Foreground="White"/>
-
-                <TextBox Style="{StaticResource InputBox}" Canvas.Left="400" Canvas.Top="180"/>
-                <Line X1="400" Y1="200" X2="500" Y2="200" Stroke="White" StrokeThickness="2"/>
-                <TextBox Style="{StaticResource OutputNode}" Canvas.Left="480" Canvas.Top="180"/>
-
-                <view:TrainingView Canvas.Top="100" Canvas.Left="600"/>
-            </Canvas>
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="5"
+                              ItemsSource="{Binding Path=GraphItems}"
+                     x:Name="Graph">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SizeChanged">
+                        <i:InvokeCommandAction x:Name="test1" Command="{Binding SetWidthCommand}"
+                                       CommandParameter="{Binding Path=ActualWidth, ElementName=Graph}"/>
+                        <i:InvokeCommandAction x:Name="test2" Command="{Binding GraphRedrawCommand}"
+                                       CommandParameter="{Binding Path=ActualHeight, ElementName=Graph}" Changed="test1_Changed"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Canvas.Left" Value="{Binding Left}"/>
+                        <Setter Property="Canvas.Top" Value="{Binding Top}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+            </ItemsControl>
         </Grid>
-        <TextBlock Foreground="White" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">Description</TextBlock>
     </Grid>
 </UserControl>
