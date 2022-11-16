@@ -13,6 +13,7 @@ namespace Perceptron.MVVM.ViewModel
     class ImageInputBoxViewModel : PositionableViewModel
     {
         BitmapSource _bitmapSource;
+        bool _mnist = true;
         public BitmapSource Image
         {
             get { return _bitmapSource; }
@@ -23,9 +24,8 @@ namespace Perceptron.MVVM.ViewModel
             }
         }
         int ImageIndex { get; set; }
-
-        public RelayCommand NextCommand { get; set; }
         public RelayCommand PictureCommand { get; set; }
+        public RelayCommand MnistCommand { get; set; }
         public TestSet TestSet { get; set; }
 
         public ImageInputBoxViewModel()
@@ -45,26 +45,33 @@ namespace Perceptron.MVVM.ViewModel
         {
             TestSet = new TestSet();
             TestSet.LoadTestMnist(@"C:\Users\Jarek\source\repos\Perceptron\data", true);
-            Next();
+            SetPictureArray(TestSet.Tests[ImageIndex].input);
         }
 
         void InitializeCommands()
         { 
-            NextCommand = new RelayCommand(o =>
-            {
-                Next();
-            });
             PictureCommand = new RelayCommand(o =>
             {
                 LoadPicture();
             });
+            MnistCommand = new RelayCommand(o =>
+            {
+                SetPictureArray(TestSet.Tests[ImageIndex].input);
+            });
         }
 
-        void Next()
+        public void NextImage()
         {
-            if (ImageIndex == TestSet.Size)
-                ImageIndex = 0;
-            SetPictureArray(TestSet.Tests[ImageIndex++].input);
+            if (_mnist)
+            {
+                if (ImageIndex == TestSet.Size)
+                    ImageIndex = 0;
+                SetPictureArray(TestSet.Tests[++ImageIndex].input);
+            }
+            else
+            {
+
+            }
         }
 
         void LoadPicture()

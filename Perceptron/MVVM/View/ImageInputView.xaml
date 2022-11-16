@@ -41,7 +41,7 @@
                 <Image Source="{Binding Image}" Width="200" Height="200" RenderOptions.BitmapScalingMode="NearestNeighbor" />
                 <StackPanel Orientation="Horizontal">
                     <Button Command="{Binding PictureCommand}">Load Picture</Button>
-                    <Button Command="{Binding NextCommand}">Load MNIST</Button>
+                    <Button Command="{Binding MnistCommand}">Load MNIST</Button>
                 </StackPanel>
             </StackPanel>
         </DataTemplate>

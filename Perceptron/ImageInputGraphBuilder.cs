@@ -33,7 +33,10 @@ namespace Perceptron
             Network = network;
         }
 
-
+        public void NextImage()
+        {
+            ImageInputBox.NextImage();
+        }
 
         public void RebuildGraph(ObservableCollection<PositionableViewModel> items)
         {
@@ -110,12 +113,16 @@ namespace Perceptron
             OutputNodes.ForEach(n =>
             {
                 n.GetOutput -= GetOutput;
+                n.OnSetValue -= SetBias;
+                n.OnGetValue -= GetBias;
             });
             OutputNodes.Clear();
             for (int i = 0; i < BiasNodes.Count; i++)
             {
                 var o = new OutputNodeViewModel(i);
                 o.GetOutput += GetOutput;
+                o.OnSetValue += SetBias;
+                o.OnGetValue += GetBias;
                 OutputNodes.Add(o);
             }
         }
@@ -206,7 +213,7 @@ namespace Perceptron
 
         int? GetOutput(int index)
         {
-            return ExecutionService.GetOutput();
+            return ExecutionService.GetOutput(index);
         }
 
         float GetBias(int index)
@@ -284,10 +291,11 @@ namespace Perceptron
             return Network.Neurons > 1;
         }
 
-        void ResetProgress()
+        public void ResetProgress()
         {
 
         }
+
         public void NotifyAll()
         {
             NotifyOutputs();
