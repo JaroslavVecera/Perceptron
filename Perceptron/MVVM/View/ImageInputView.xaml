@@ -125,6 +125,37 @@
                     </Style>
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>
+
+            <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                    <Button Content="Next" Style="{StaticResource NextButton}" Command="{Binding NextCommand}" ToolTip="Next image"></Button>
+                    <Button Content="Clear" Style="{StaticResource ClearButton}" Command="{Binding ClearCommand}" ToolTip="Clear"></Button>
+                    <Button Content="Randomize"  Style="{StaticResource RandomizeButton}" Command="{Binding RandomCommand}" ToolTip="Rendom input"></Button>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                    <Button IsEnabled="True" Content="Step1" Style="{StaticResource Step1Button}" Command="{Binding Step1Command}" ToolTip="Step 1"></Button>
+                    <Button IsEnabled="True" Content="Step2" Style="{StaticResource Step2Button}" Command="{Binding Step2Command}" ToolTip="Step 2"></Button>
+                    <Button IsEnabled="True" Content="Step3" Style="{StaticResource Step3Button}" Command="{Binding Step3Command}" ToolTip="Step 3"></Button>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                    <Button Content="Save" Style="{StaticResource SaveButton}" Command="{Binding SaveCommand}"></Button>
+                    <Button Content="Load" Style="{StaticResource LoadButton}" Command="{Binding LoadCommand}"></Button>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Grid>
 </UserControl>

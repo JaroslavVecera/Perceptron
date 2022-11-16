@@ -168,6 +168,38 @@
     </Style>
 
     <Style TargetType="{x:Type Button}"
+           x:Key="NextButton"
+           BasedOn="{StaticResource BaseIconButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid   HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Margin="7"
+                                Background="Transparent">
+                        <Ellipse HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch" 
+                                 Fill="{TemplateBinding Background}"/>
+                        <Grid HorizontalAlignment="Center"
+                                     VerticalAlignment="Center">
+                            <Polyline
+                                     Stroke="{TemplateBinding Foreground}">
+                                <Polyline.Points>
+                                    <Point X="0" Y="10" />
+                                    <Point X="17" Y="10" />
+                                    <Point X="13" Y="5" />
+                                    <Point X="17" Y="10" />
+                                    <Point X="10" Y="17" />
+                                </Polyline.Points>
+                            </Polyline>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type Button}"
            x:Key="RandomizeButton"
            BasedOn="{StaticResource BaseIconButton}">
         <Setter Property="Template">
