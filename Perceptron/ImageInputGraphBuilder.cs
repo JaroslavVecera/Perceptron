@@ -68,10 +68,13 @@ namespace Perceptron
                 ImageInputBox = new ImageInputBoxViewModel();
             else
             {
+                ImageInputBox.OnChangeInput -= ChangeInput;
                 var image = ImageInputBox.Image;
                 var testSet = ImageInputBox.TestSet;
                 ImageInputBox = new ImageInputBoxViewModel(testSet, image);
             }
+            ImageInputBox.OnChangeInput += ChangeInput;
+            ImageInputBox.Notify();
             Brace = new BraceViewModel();
         }
 
@@ -104,7 +107,7 @@ namespace Perceptron
         {
             int count = BiasNodes.Count;
             Edges = new List<EdgeViewModel>();
-            for (int i = 0; i < count + 1; i++)
+            for (int i = 0; i < 2 * count + 1; i++)
                 Edges.Add(new EdgeViewModel());
         }
 
@@ -161,8 +164,8 @@ namespace Perceptron
             ImageInputBox.Left = GetColumnLeft(0) - 100;
             ImageInputBox.Top = Height / 2 - 100;
 
-            Brace.Left = GetColumnLeft(1) - 25;
-            Brace.Top = Height / 2 - 50;
+            Brace.Left = GetColumnLeft(1) - 70;
+            Brace.Top = Height / 2 - 80;
         }
         void RedrawBiasNodes()
         {
@@ -191,7 +194,12 @@ namespace Perceptron
             {
                 Edges[i].Source = new System.Windows.Point(BiasNodes[i].Left + 40, BiasNodes[i].Top + 20);
                 Edges[i].Sink = new System.Windows.Point(OutputNodes[i].Left, OutputNodes[i].Top + 20);
-            };
+            }
+            for (int i = 0; i < BiasNodes.Count; i++)
+            {
+                Edges[BiasNodes.Count + i].Source = new System.Windows.Point(GetColumnLeft(1) - 5, Height / 2);
+                Edges[BiasNodes.Count + i].Sink = new System.Windows.Point(BiasNodes[i].Left, BiasNodes[i].Top + 20);
+            }
         }
 
         void RedrawPlusButton()
@@ -323,6 +331,11 @@ namespace Perceptron
         void NotifyTrainingBox()
         {
             //TrainingBox.OnValueChanged();
+        }
+
+        void ChangeInput(float[] input)
+        {
+            Network.InputLayer.InputArray = input;
         }
     }
 }

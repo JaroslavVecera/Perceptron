@@ -46,7 +46,7 @@
             </StackPanel>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:BraceViewModel}">
-            <latex:FormulaControl Canvas.Left="300" Canvas.Top="160" Formula="\{" Scale="80" Foreground="White"/>
+            <latex:FormulaControl Canvas.Left="300" Canvas.Top="160" Formula="\}" Scale="160" Foreground="White"/>
         </DataTemplate>
     </UserControl.Resources>
     

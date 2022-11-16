@@ -14,6 +14,8 @@ namespace Perceptron.MVVM.ViewModel
     {
         BitmapSource _bitmapSource;
         bool _mnist = true;
+        public event Action<float[]> OnChangeInput;
+        float[] _array;
         public BitmapSource Image
         {
             get { return _bitmapSource; }
@@ -81,10 +83,17 @@ namespace Perceptron.MVVM.ViewModel
                 SetPictureArray(arr);
         }
 
+        public void Notify()
+        {
+            OnChangeInput?.Invoke(_array);
+        }
+
         void SetPictureArray(float[] array)
         {
             byte[] arr = array.Select(f => (byte)f).ToArray();
             Image = BitmapSource.Create(28, 28, 300, 300, PixelFormats.Indexed8, BitmapPalettes.Gray256, arr, 28);
+            _array = array;
+            Notify();
         }
     }
 }
