@@ -28,6 +28,7 @@ namespace Perceptron.MVVM.ViewModel
         public RelayCommand NextCommand { get; set; }
         Network.Network Network { get; set; }
         NetworkExecutionServiceImageInput ExecutionService { get; set; }
+        public LongTrainingViewModel TrainingBox { get; set; } = new LongTrainingViewModel();
         ImageInputGraphBuilder Builder { get; set; }
         string Description { get; set; }
 
@@ -41,18 +42,38 @@ namespace Perceptron.MVVM.ViewModel
                 OnPropertyChanged();
             }
         }
+        public bool Exclusivity { set { Builder.Exclusivity = value; } }
 
+        public bool Training
+        {
+            set 
+            { 
+                Builder.SetTraining(value);
+                TrainingBox.SetVisibility(value);    
+            } 
+        }
 
         public ImageInputViewModel()
         {
-            Network = new Network.Network(28 * 28, 5, (float)0.5);
+            Network = new ConsoleTest().Run(3);
             ExecutionService = new NetworkExecutionServiceImageInput(Network);
-            CreateBuilder();
+            CreateBuilder(false);
+            ExecutionService.DesiredOutput = Network.Biases.Select(b => 0).ToList();
             RebuildGraph();
             InitializeCommands();
+            TrainingBox.OnGetCoefficient += Builder.GetTrainingCoefficient;
+            TrainingBox.OnSetCoefficient += Builder.SetTrainingCoefficient;
+            TrainingBox.OnValueChanged();
+            MnistLikeImageReader.OnModifyImage += ModifyImage;
         }
 
-        void CreateBuilder()
+        void ModifyImage()
+        {
+            Builder.ImageModified();
+            ExecutionService.ResetProgress();
+        }
+
+        void CreateBuilder(bool t)
         {
             TrainingViewModel training = null;
             if (Builder != null)
@@ -65,6 +86,7 @@ namespace Perceptron.MVVM.ViewModel
             //Builder.SetTrainingBox(training);
             Builder.OnRebuildGraph += RebuildGraph;
             Builder.OnRedrawGraph += RedrawGraph;
+            Builder.SetTraining(t);
         }
 
         void RebuildGraph()
@@ -98,7 +120,10 @@ namespace Perceptron.MVVM.ViewModel
             {
                 EnforceValidData(ExecutionService.Step1);
             });
-
+            Step2Command = new RelayCommand(o =>
+            {
+                EnforceValidData(ExecutionService.Step2);
+            });
             ClearCommand = new RelayCommand(o =>
             {
                 Network.Clear();
@@ -117,14 +142,16 @@ namespace Perceptron.MVVM.ViewModel
                 }
                 Network = network;
                 //bool oldTraining = ExecutionService.Training;
+                bool t = ExecutionService.Training;
                 ExecutionService = new NetworkExecutionServiceImageInput(Network);
                 double width = Builder.Width;
                 double height = Builder.Height;
                 TrainingViewModel tb = null;
-                CreateBuilder();
+                CreateBuilder(t);
                 Builder.Width = width;
                 Builder.Height = height;
                 Builder.ResetProgress();
+                ExecutionService.DesiredOutput = Network.Biases.Select(b => 0).ToList();
                 //ExecutionService.Training = oldTraining;
                 RebuildGraph();
                 //ExecutionService.Training = oldTraining;
@@ -142,12 +169,13 @@ namespace Perceptron.MVVM.ViewModel
             NextCommand = new RelayCommand(o =>
             {
                 Builder.NextImage();
+                Builder.ResetProgress();
             });
         }
 
         void EnforceValidData(Func<string> action)
         {
-            if (Builder.AreValuesValid())
+            if (Builder.AreValuesValid() && (TrainingBox.IsNumeric || !ExecutionService.Training))
             {
                 Description = action.Invoke();
                 Builder.NotifyAll();

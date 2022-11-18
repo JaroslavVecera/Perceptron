@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,9 @@ namespace Perceptron.Network
 {
     public static class MnistLikeImageReader
     {
+        static FileSystemWatcher Watcher { get; set; }
+        static bool _watcherDisabled = true;
+        public static event Action OnModifyImage;
         static byte[] GetPixels(BitmapSource source)
         {
             if (source.Format != PixelFormats.Bgra32)
@@ -45,18 +49,12 @@ namespace Perceptron.Network
             return buffer;
         }
 
-        public static float[] LoadImage()
+        public static float[] LoadImage(string path)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.DefaultExt = ".png";
-            openFileDialog.Filter = "Images (.png)|*.png";
-            openFileDialog.CheckFileExists = true;
-            openFileDialog.CheckPathExists = true;
-            if (openFileDialog.ShowDialog() == true)
-            {
                 try
                 {
-                    float[] arr = ImageToArray(openFileDialog.FileName);
+                    float[] arr = ImageToArray(path);
+                    RestartWatcher(Path.GetDirectoryName(path));
                     return arr;
                 }
                 catch(Exception e)
@@ -64,8 +62,29 @@ namespace Perceptron.Network
                     MessageBox.Show("Bad image.", "Image error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return null;
                 }
+        }
+
+        static void RestartWatcher(string path)
+        {
+            if (_watcherDisabled)
+            {
+                Watcher = new FileSystemWatcher();
+                Watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.Attributes | NotifyFilters.Size | NotifyFilters.CreationTime
+                                     | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+                Watcher.Path = path;
+                Watcher.Changed += new FileSystemEventHandler(OnChanged);
+                Watcher.EnableRaisingEvents = true;
+                _watcherDisabled = false;
             }
-            return null;
+            Watcher.Path = path;
+        }
+
+        static void OnChanged(object sender, FileSystemEventArgs e)
+        {
+            Application.Current.Dispatcher.Invoke(delegate
+            {
+                OnModifyImage?.Invoke();
+            });
         }
     }
 }

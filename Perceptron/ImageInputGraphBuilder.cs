@@ -16,8 +16,11 @@ namespace Perceptron
         List<InputNodeViewModel> BiasNodes { get; set; } = new List<InputNodeViewModel>();
         List<EdgeViewModel> Edges { get; set; } = new List<EdgeViewModel>();
         List<OutputNodeViewModel> OutputNodes { get; set; } = new List<OutputNodeViewModel>();
+        TrainingViewModel TrainingBox { get; set; }
         PlusNodeViewModel PlusButton { get; set; }
+        List<DesiredOutputViewModel> DesiredOutputNodes { get; set; } = new List<DesiredOutputViewModel>();
         Network.NetworkExecutionServiceImageInput ExecutionService { get; set; }
+        public bool Exclusivity { get; set; }
         Network.Network Network { get; set; }
         public event Action OnRedrawGraph;
         public event Action OnRebuildGraph;
@@ -38,6 +41,11 @@ namespace Perceptron
             ImageInputBox.NextImage();
         }
 
+        public void ImageModified()
+        {
+            ImageInputBox.ImageModified();
+        }
+
         public void RebuildGraph(ObservableCollection<PositionableViewModel> items)
         {
             RebuildStatic();
@@ -45,11 +53,7 @@ namespace Perceptron
             RebuildEdges();
             RebuildPlusButton();
             RebuildOutputNodes();
-            /*
-            if (!items.Any())
-            {
-                RebuildTrainingBox();
-            }*/
+            RebuildDesiredOutputNodes();
             RebuildGraphItems(items);
         }
         public void RedrawGraph()
@@ -59,7 +63,7 @@ namespace Perceptron
             RedrawOutputNodes();
             RedrawEdges();
             RedrawPlusButton();
-            //RedrawTrainingBox();
+            RedrawDesiredOutputNodes();
         }
 
         void RebuildStatic()
@@ -69,9 +73,10 @@ namespace Perceptron
             else
             {
                 ImageInputBox.OnChangeInput -= ChangeInput;
-                var image = ImageInputBox.Image;
+                var image = ImageInputBox.Array;
                 var testSet = ImageInputBox.TestSet;
-                ImageInputBox = new ImageInputBoxViewModel(testSet, image);
+                var path = ImageInputBox.Path;
+                ImageInputBox = new ImageInputBoxViewModel(testSet, path, image);
             }
             ImageInputBox.OnChangeInput += ChangeInput;
             ImageInputBox.Notify();
@@ -144,12 +149,11 @@ namespace Perceptron
 
         void RebuildGraphItems(ObservableCollection<PositionableViewModel> graphItems)
         {
-            //var it = graphItems.Where(i => i != TrainingBox).ToList();
-            var it = graphItems.ToList();
+            var it = graphItems.Where(i => i != TrainingBox).ToList();
             it.ForEach(i => graphItems.Remove(i));
             if (!graphItems.Any())
             {
-               // graphItems.Add(TrainingBox);
+               graphItems.Add(TrainingBox);
             }
             OutputNodes.ForEach(n => graphItems.Add(n));
             Edges.ForEach(e => graphItems.Add(e));
@@ -157,6 +161,26 @@ namespace Perceptron
             graphItems.Add(PlusButton);
             graphItems.Add(ImageInputBox);
             graphItems.Add(Brace);
+            DesiredOutputNodes.ForEach(n => graphItems.Add(n));
+        }
+
+        void RebuildDesiredOutputNodes()
+        {
+            DesiredOutputNodes.ForEach(n =>
+            {
+                n.OnSetValue -= SetDesiredOutput;
+                n.OnGetValue -= GetDesiredOutput;
+            });
+            DesiredOutputNodes.Clear();
+            for (int i = 0; i < BiasNodes.Count; i++)
+            {
+                var o = new DesiredOutputViewModel(i);
+                o.OnSetValue += SetDesiredOutput;
+                o.OnGetValue += GetDesiredOutput;
+                o.Visibility = ExecutionService.Training ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+                DesiredOutputNodes.Add(o);
+            }
+            NotifyDesiredOutputs();
         }
 
         void RedrawStatic()
@@ -209,6 +233,16 @@ namespace Perceptron
             PlusButton.Top = BiasNodes.Last().Top + 60;
         }
 
+        void RedrawDesiredOutputNodes()
+        {
+            double left = (GetColumnLeft(4) + GetColumnLeft(5)) / 2 - 15;
+            for (int i = 0; i < OutputNodes.Count; i++)
+            {
+                DesiredOutputNodes[i].Left = left;
+                DesiredOutputNodes[i].Top = OutputNodes[i].Top + 10;
+            }
+        }
+
         double GetColumnLeft(int i)
         {
             if (i == 0)
@@ -242,8 +276,6 @@ namespace Perceptron
         public bool AreValuesValid()
         {
             bool inputs = BiasNodes.All(i => i.IsNumeric);
-            //bool training = !ExecutionService.Training || (TrainingBox.IsNumeric && TrainingBox.IsValidOutput);
-            // return inputs && training;
             return inputs;
         }
         void SetBias(int index, float value)
@@ -275,9 +307,17 @@ namespace Perceptron
             ResetProgress();
         }
 
-        public void SetDesiredOutput(int output)
+        public void SetDesiredOutput(int index, float value)
         {
-            ExecutionService.DesiredOutput = output;
+            if (value == 1 && Exclusivity)
+                ExecutionService.DesiredOutput = DesiredOutputNodes.Select(n => 0).ToList();
+            ExecutionService.DesiredOutput[index] = (int)value;
+            NotifyDesiredOutputs();
+        }
+
+        public float GetDesiredOutput(int index)
+        {
+            return (int)ExecutionService.DesiredOutput[index];
         }
 
         public void SetTrainingCoefficient(float coeff)
@@ -287,8 +327,15 @@ namespace Perceptron
 
         public void SetTraining(bool val)
         {
-            //ExecutionService.Training = val;
+            ExecutionService.Training = val;
+            DesiredOutputNodes.ForEach(n => n.Visibility = val ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed);
         }
+
+        public void SetDesiredOutput(int index, int value)
+        {
+            ExecutionService.DesiredOutput[index] = value;
+        }
+
         private void BiasNodeArrow(ArrowType arg1, int arg2)
         {
 
@@ -301,14 +348,14 @@ namespace Perceptron
 
         public void ResetProgress()
         {
-
+            ExecutionService.ResetProgress();
         }
 
         public void NotifyAll()
         {
             NotifyOutputs();
             NotifyBiasNodes();
-            NotifyTrainingBox();
+            NotifyDesiredOutputs();
             NotifyCrossButtons();
         }
 
@@ -328,9 +375,9 @@ namespace Perceptron
             BiasNodes.ForEach(n => n.OnCrossButtonEnabledChanged());
         }
 
-        void NotifyTrainingBox()
+        void NotifyDesiredOutputs()
         {
-            //TrainingBox.OnValueChanged();
+            DesiredOutputNodes.ForEach(n => n.OnValueChanged());
         }
 
         void ChangeInput(float[] input)

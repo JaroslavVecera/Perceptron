@@ -8,10 +8,11 @@ namespace Perceptron.Network
 {
     class NetworkExecutionServiceImageInput
     {
-        public int DesiredOutput { set; get; }
+        public List<int> DesiredOutput { set; get; } = new List<int>();
         public List<int?> Outputs { get; set; } = new List<int?>();
         ExecutionState State { get; set; } = new ExecutionState() { Group = ExecutionStateGroup.Normal };
         Network Network { get; set; }
+        public bool Training { get; set; } = true;
         public NetworkExecutionServiceImageInput(Network network)
         {
             Network = network;
@@ -29,6 +30,7 @@ namespace Perceptron.Network
             float[,] oldWeights = Network.Weights;
 
             oldBiases = oldBiases.Append(0).ToArray();
+            DesiredOutput.Add(0);
 
             Network.Neurons++;
             Network.Biases = oldBiases;
@@ -49,6 +51,7 @@ namespace Perceptron.Network
 
             Network.Biases = oldBiases;
             Network.Neurons--;
+            DesiredOutput.RemoveAt(index);
 
             Network.Weights = new float[Network.InputLayer.Size, Network.Neurons];
             for (int i = 0; i < Network.Weights.GetLength(0); i++)
@@ -69,83 +72,38 @@ namespace Perceptron.Network
             return res;
         }
 
+        public string Step2()
+        {
+            string res = "";
+            Network.Run();
+            res = DoStep();
+            while (State.Group != ExecutionStateGroup.Normal)
+                res = DoStep();
+            Network.Stop();
+            return res;
+        }
+
         string DoStep()
         {
-            if (State.Group == ExecutionStateGroup.Normal)
+            if (State.Group == ExecutionStateGroup.Normal || (State.Group == ExecutionStateGroup.Activation && !Training))
             {
                 Network.CalculateOutput();
                 Outputs = Network.Output.Select(o => (int?)o).ToList();
+                if (Training)
+                    State.Group = ExecutionStateGroup.Activation;
+            }
+            else
+            {
+                Network.CalculateOutput();
+                Network.LearnNeurons(DesiredOutput.ToArray());
+                State.Group = ExecutionStateGroup.Normal;
             }
             return null;
-            /*else if (State.Group == ExecutionStateGroup.SumMember)
-            {
-                State.Index++;
-                if (State.Index == Network.InputLayer.Size)
-                {
-                    State.Group = ExecutionStateGroup.Sum;
-                    State.Index = 0;
-                    CountSum();
-                    return DescriptionGenerator.Sum(Network);
-                }
-                else
-                {
-                    return DescriptionGenerator.PartialSum(Network, State.Index);
-                }
-            }
-            else if (State.Group == ExecutionStateGroup.Sum)
-            {
-                State.Group = ExecutionStateGroup.Activation;
-                State.Index = 0;
-                CountOutput();
-                return DescriptionGenerator.Output(Network, Sum.Value);
-            }
-            else if (State.Group == ExecutionStateGroup.Activation)
-            {
-                if (Training)
-                {
-                    State.Group = ExecutionStateGroup.UpdateBias;
-                    Network.Biases[0] += -Network.LearningCoeficient * (DesiredOutput - (float)Output);
-                    return DescriptionGenerator.UpdateBias(Network, DesiredOutput);
-                }
-                else
-                {
-                    Sum = null;
-                    State.Group = ExecutionStateGroup.Normal;
-                }
-                return "";
-            }
-            else if (State.Group == ExecutionStateGroup.UpdateBias)
-            {
-                if (!Training)
-                {
-                    State.Group = ExecutionStateGroup.Normal;
-                    return "";
-                }
-                State.Group = ExecutionStateGroup.UpdateWeight;
-                State.Index = 0;
-                Network.Weights[State.Index, 0] += Network.LearningCoeficient * Network.InputLayer[State.Index] * (DesiredOutput - (float)Output);
-                return DescriptionGenerator.UpdateWeight(Network, DesiredOutput, State.Index);
-            }
-            else if (State.Group == ExecutionStateGroup.UpdateWeight)
-            {
-                if (!Training)
-                {
-                    State.Group = ExecutionStateGroup.Normal;
-                    return "";
-                }
-                State.Index++;
-                if (State.Index < Network.InputLayer.Size)
-                {
-                    Network.Weights[State.Index, 0] += Network.LearningCoeficient * Network.InputLayer[State.Index] * (DesiredOutput - (float)Output);
-                    return DescriptionGenerator.UpdateWeight(Network, DesiredOutput, State.Index);
-                }
-                else
-                {
-                    State.Group = ExecutionStateGroup.Normal;
-                    Sum = null;
-                }
-            }
-            return "";*/
+        }
+
+        public void ResetProgress()
+        {
+            State.Group = ExecutionStateGroup.Normal;
         }
     }
 }

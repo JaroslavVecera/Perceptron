@@ -12,7 +12,7 @@ namespace Perceptron.Network
         float? Sum { get; set; }
         int? Output { get; set; }
         public int DesiredOutput { get; set; } = 0;
-        public bool Training { get; set; }
+        public bool Training { get; set; } = true;
         ExecutionState State { get; set; } = new ExecutionState() { Group = ExecutionStateGroup.Normal };
 
         public NetworkExecutionServiceDirectInput(Network network)

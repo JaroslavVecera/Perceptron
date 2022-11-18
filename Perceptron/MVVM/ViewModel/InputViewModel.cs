@@ -22,7 +22,7 @@ namespace Perceptron.MVVM.ViewModel
         public bool IsNumeric
         {
             get { return _isNumeric; }
-            private set
+            protected set
             {
                 _isNumeric = value;
                 OnPropertyChanged();
@@ -49,7 +49,7 @@ namespace Perceptron.MVVM.ViewModel
             });
         }
 
-        protected void ParseValue(string value)
+        protected virtual void ParseValue(string value)
         {
             float parsed = 0;
             bool canParse = float.TryParse(value, out parsed);

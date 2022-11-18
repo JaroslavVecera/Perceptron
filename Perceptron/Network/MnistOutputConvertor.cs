@@ -15,6 +15,13 @@ namespace Perceptron.Network
             return res;
         }
 
+        public static int[] EncodePositional(int i, int num)
+        {
+            int[] res = new int[num];
+            res[i] = 1;
+            return res;
+        }
+
         public static int DecodePositional(int[] arr)
         {
             return arr.ToList().FindIndex(x => x == 1);

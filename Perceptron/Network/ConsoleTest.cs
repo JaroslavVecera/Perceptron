@@ -9,17 +9,19 @@ namespace Perceptron.Network
 {
     public class ConsoleTest
     {
-        public void Run()
+        public Network Run(int num)
         {
-            Network network = new Network(28 * 28, 10, (float)1.75);
+            Network network = new Network(28 * 28, num, (float)0.5);
             if (!network.Run())
                 Trace.WriteLine("fail");
             TestSet testSet = new TestSet();
-            testSet.LoadMnist(@"C:\Users\Jarek\source\repos\Perceptron\data", true);
+            testSet.LoadTestMnist(@"C:\Users\Jarek\source\repos\Perceptron\data", true, num);
             Train(network, testSet.GetIterator());
-            Test(network);
+            network.Stop();
+            /*Test(network);
             while (true)
-                OwnTest(network);
+                OwnTest(network);*/
+            return network;
         }
         void Train(Network network, TestIterator iterator)
         {

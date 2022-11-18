@@ -33,8 +33,8 @@
         <DataTemplate DataType="{x:Type viewModel:PlusNodeViewModel}">
             <Button IsEnabled="{Binding IsEnabled}" Content="+" Style="{StaticResource PlusButton}" Command="{Binding AddCommand}" />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModel:TrainingViewModel}">
-            <view:TrainingView HorizontalAlignment="Center" />
+        <DataTemplate DataType="{x:Type viewModel:DesiredOutputViewModel}">
+            <CheckBox IsChecked="{Binding Input}" Visibility="{Binding Visibility}"/>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:ImageInputBoxViewModel}">
             <StackPanel Canvas.Left="50" Canvas.Top="100">
@@ -92,14 +92,23 @@
                            HorizontalAlignment="Center"
                            Foreground="White"
                            FontSize="16"/>
-            <TextBlock Text="Training"
-                           Grid.Column="4"
-                           Grid.Row="0"
+            <StackPanel
+                
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
+                 Orientation="Horizontal" Grid.Row="0" Grid.Column="4">
+                <TextBlock Text="Training"
+                           Grid.Column="4"
+                           Grid.Row="0"
                            Foreground="White"
                            FontSize="16"/>
-
+                <ToggleButton IsChecked="{Binding Training, Mode=OneWayToSource}" Style="{StaticResource ToggleButton}" Margin="10,5,0,0" Width="30" />
+                <StackPanel Visibility="{Binding }" Margin="10,0,0,0" >
+                    <TextBlock Foreground="White" FontSize="9">Exclusivity</TextBlock>
+                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Exclusivity}"/>
+                </StackPanel>
+            </StackPanel>
+            
             <ItemsControl  Grid.Column="0"
                     Grid.Row="1"
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.ColumnSpan="5"
@@ -125,7 +134,7 @@
                     </Style>
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>
-
+            
             <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -157,5 +166,13 @@
                 </StackPanel>
             </Grid>
         </Grid>
+
+        <ContentControl Content="{Binding TrainingBox}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <ContentControl.ContentTemplate>
+                <DataTemplate>
+                    <view:LongTrainingView/>
+                </DataTemplate>
+            </ContentControl.ContentTemplate>
+        </ContentControl>
     </Grid>
 </UserControl>

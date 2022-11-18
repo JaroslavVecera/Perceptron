@@ -1,4 +1,5 @@
-﻿using Perceptron.Core;
+﻿using Microsoft.Win32;
+using Perceptron.Core;
 using Perceptron.Network;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,10 @@ namespace Perceptron.MVVM.ViewModel
     {
         BitmapSource _bitmapSource;
         bool _mnist = true;
+        public string Path { get; set; } = "";
         public event Action<float[]> OnChangeInput;
         float[] _array;
+        public float[] Array { get { return _array; } }
         public BitmapSource Image
         {
             get { return _bitmapSource; }
@@ -28,6 +31,7 @@ namespace Perceptron.MVVM.ViewModel
         int ImageIndex { get; set; }
         public RelayCommand PictureCommand { get; set; }
         public RelayCommand MnistCommand { get; set; }
+
         public TestSet TestSet { get; set; }
 
         public ImageInputBoxViewModel()
@@ -36,17 +40,18 @@ namespace Perceptron.MVVM.ViewModel
             InitializeCommands();
         }
 
-        public ImageInputBoxViewModel(TestSet testSet, BitmapSource image)
+        public ImageInputBoxViewModel(TestSet testSet, string path, float[] image)
         {
+            Path = path;
             TestSet = testSet;
-            Image = image;
+            SetPictureArray(image);
             InitializeCommands();
         }
 
         void Test()
         {
             TestSet = new TestSet();
-            TestSet.LoadTestMnist(@"C:\Users\Jarek\source\repos\Perceptron\data", true);
+            TestSet.LoadTestMnist(@"C:\Users\Jarek\source\repos\Perceptron\data", true, 3);
             SetPictureArray(TestSet.Tests[ImageIndex].input);
         }
 
@@ -54,12 +59,21 @@ namespace Perceptron.MVVM.ViewModel
         { 
             PictureCommand = new RelayCommand(o =>
             {
+                _mnist = false;
                 LoadPicture();
             });
             MnistCommand = new RelayCommand(o =>
             {
+                _mnist = true;
                 SetPictureArray(TestSet.Tests[ImageIndex].input);
             });
+        }
+
+        public void ImageModified()
+        {
+            float[] arr = MnistLikeImageReader.LoadImage(Path);
+            if (arr != null)
+                SetPictureArray(arr);
         }
 
         public void NextImage()
@@ -70,17 +84,24 @@ namespace Perceptron.MVVM.ViewModel
                     ImageIndex = 0;
                 SetPictureArray(TestSet.Tests[++ImageIndex].input);
             }
-            else
-            {
-
-            }
         }
 
         void LoadPicture()
         {
-            float[] arr = MnistLikeImageReader.LoadImage();
-            if (arr != null)
-                SetPictureArray(arr);
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.DefaultExt = ".png";
+            openFileDialog.Filter = "Images (.png)|*.png";
+            openFileDialog.CheckFileExists = true;
+            openFileDialog.CheckPathExists = true;
+            if (openFileDialog.ShowDialog() == true)
+            {
+                float[] arr = MnistLikeImageReader.LoadImage(openFileDialog.FileName);
+                if (arr != null)
+                {
+                    Path = openFileDialog.FileName;
+                    SetPictureArray(arr);
+                }
+            }
         }
 
         public void Notify()

@@ -33,23 +33,23 @@ namespace Perceptron.MVVM.View
                 case Key.Left:
                     {
                         if (CaretIndex == 0)
-                            ArrowCommand.Execute(ArrowType.Left);
+                            ArrowCommand?.Execute(ArrowType.Left);
                         break;
                     }
                 case Key.Right:
                     {
                         if (CaretIndex == Text.Length)
-                            ArrowCommand.Execute(ArrowType.Right);
+                            ArrowCommand?.Execute(ArrowType.Right);
                         break;
                     }
                 case Key.Down:
                     {
-                        ArrowCommand.Execute(ArrowType.Down);
+                        ArrowCommand?.Execute(ArrowType.Down);
                         break;
                     }
                 case Key.Up:
                     {
-                        ArrowCommand.Execute(ArrowType.Up);
+                        ArrowCommand?.Execute(ArrowType.Up);
                         break;
                     }
             }

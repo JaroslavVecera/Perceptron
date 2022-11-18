@@ -184,7 +184,7 @@ namespace Perceptron.Network
         void LearnNeuronsUnsafe(int[] expected)
         {
             for (int i = 0; i < Neurons; i++)
-                LearnNeuron(i, expected[i]);
+                LearnNeuronUnsafe(i, expected[i]);
         }
             
         bool ValidateProperties()

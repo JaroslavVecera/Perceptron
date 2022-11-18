@@ -38,17 +38,17 @@ namespace Perceptron.Network
             }).ToList();
         }
 
-        public void LoadTestMnist(string path, bool train)
+        public void LoadTestMnist(string path, bool train, int num)
         {
             IEnumerable<TestCase> data;
             if (train)
                 data = FileReaderMNIST.LoadImagesAndLables(Path.Join(path, "train-labels-idx1-ubyte.gz"), Path.Join(path, "train-images-idx3-ubyte.gz"));
             else
                 data = FileReaderMNIST.LoadImagesAndLables(Path.Join(path, "t10k-labels-idx1-ubyte.gz"), Path.Join(path, "t10k-images-idx3-ubyte.gz"));
-            Tests = data.Take(500).ToList().Select((TestCase tc) =>
+            Tests = data.Where(c => c.Label < num).Take(1000).ToList().Select((TestCase tc) =>
             {
                 Test t = new Test() { input = FlattenArray(tc.Image) };
-                t.output = MnistOutputConvertor.EncodePositional(tc.Label);
+                t.output = MnistOutputConvertor.EncodePositional(tc.Label, num);
                 return t;
             }).ToList();
         }
