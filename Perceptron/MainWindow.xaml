@@ -37,6 +37,7 @@
             <Grid.Background>
                 <SolidColorBrush Color="{StaticResource TitleColor}" />
             </Grid.Background>
+            <Image Margin="7" Source="favicon.ico" HorizontalAlignment="Left" />
             <StackPanel VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button FontSize="18" Content="_" Height="30" Width="40" Click="MinimizeButton_Click"
                         Background="Transparent" BorderThickness="0" Foreground="White" Style="{StaticResource TitleBarButton}"/>
