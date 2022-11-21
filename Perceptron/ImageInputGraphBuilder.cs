@@ -278,7 +278,7 @@ namespace Perceptron
 
         float GetBias(int index)
         {
-            return Network.Biases[index];
+            return (float)Math.Round(Network.Biases[index], 3);
         }
 
         public float GetTrainingCoefficient()

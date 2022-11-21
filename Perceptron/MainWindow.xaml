@@ -9,13 +9,24 @@
         xmlns:latex="clr-namespace:WpfMath.Controls;assembly=WpfMath"
         mc:Ignorable="d"
         WindowStyle="None"
-        ResizeMode="CanResizeWithGrip"
         AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip"
         Title="MainWindow" MinHeight="750" MinWidth="1200">
+    <Window.Style>
+        <Style TargetType="Window">
+            <Style.Triggers>
+                <Trigger Property="WindowState" Value="Maximized">
+                    <Setter Property="BorderThickness" Value="7" />
+                    
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Style>
+
     <Window.DataContext>
         <viewModel:MainWindowViewModel />
     </Window.DataContext>
-    
+
     <Grid>
         <Grid.Background>
             <SolidColorBrush Color="{StaticResource ResourceKey=PrimaryColor}" />
