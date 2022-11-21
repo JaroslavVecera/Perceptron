@@ -10,6 +10,7 @@ namespace Perceptron.MVVM.ViewModel
 {
     class LongTrainingViewModel : ObservableObject
     {
+        public event Action OnInputChanged;
         public void SetVisibility(bool val)
         {
             Visibility = val ? Visibility.Visible : Visibility.Collapsed;
@@ -79,7 +80,10 @@ namespace Perceptron.MVVM.ViewModel
             float parsed = 0;
             bool canParse = float.TryParse(value, out parsed);
             if (canParse != IsNumeric)
+            {
                 IsNumeric = canParse;
+                OnInputChanged?.Invoke();
+            }
             if (canParse)
                 Coefficient = parsed;
         }

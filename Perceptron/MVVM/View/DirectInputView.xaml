@@ -153,9 +153,9 @@
                 <StackPanel Grid.Column="1"
                             Orientation="Horizontal"
                             HorizontalAlignment="Center">
-                    <Button IsEnabled="True" Content="Step1" Style="{StaticResource Step1Button}" Command="{Binding Step1Command}" ToolTip="Step 1"></Button>
-                    <Button IsEnabled="True" Content="Step2" Style="{StaticResource Step2Button}" Command="{Binding Step2Command}" ToolTip="Step 2"></Button>
-                    <Button IsEnabled="True" Content="Step3" Style="{StaticResource Step3Button}" Command="{Binding Step3Command}" ToolTip="Step 3"></Button>
+                    <Button Content="Step1" Style="{StaticResource Step1Button}" Command="{Binding Step1Command}" ToolTip="Step 1"></Button>
+                    <Button Content="Step2" Style="{StaticResource Step2Button}" Command="{Binding Step2Command}" ToolTip="Step 2"></Button>
+                    <Button Content="Step3" Style="{StaticResource Step3Button}" Command="{Binding Step3Command}" ToolTip="Step 3"></Button>
                 </StackPanel>
 
                 <StackPanel Grid.Column="2"

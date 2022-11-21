@@ -58,6 +58,7 @@ namespace Perceptron.MVVM.ViewModel
                 Builder.OnRebuildGraph -= RebuildGraph;
                 Builder.OnRedrawGraph -= RedrawGraph;
                 Builder.OnResetDescription -= ResetDescription;
+                Builder.OnInputChanged -= InputChanged;
                 training = Builder.GetTrainingBox();
             }
             Builder = new DirectInputGraphBuilder(ExecutionService, Network);
@@ -65,6 +66,7 @@ namespace Perceptron.MVVM.ViewModel
             Builder.OnRebuildGraph += RebuildGraph;
             Builder.OnRedrawGraph += RedrawGraph;
             Builder.OnResetDescription += ResetDescription;
+            Builder.OnInputChanged += InputChanged;
         }
 
         void RebuildGraph()
@@ -97,14 +99,26 @@ namespace Perceptron.MVVM.ViewModel
             Step1Command = new RelayCommand(o =>
             {
                 EnforceValidData(ExecutionService.Step1);
+            },
+            o =>
+            {
+                return Builder.AreValuesValid();
             });
             Step2Command = new RelayCommand(o =>
             {
                 EnforceValidData(ExecutionService.Step2);
+            },
+            o =>
+            {
+                return Builder.AreValuesValid();
             });
             Step3Command = new RelayCommand(o =>
             {
                 EnforceValidData(ExecutionService.Step3);
+            },
+            o =>
+            {
+                return Builder.AreValuesValid();
             });
             ClearCommand = new RelayCommand(o =>
             {
@@ -143,6 +157,15 @@ namespace Perceptron.MVVM.ViewModel
                 Builder.NotifyWeights();
                 Builder.ResetProgress();
             });
+        }
+
+        void InputChanged()
+        {
+            if (Step1Command == null || Step2Command == null || Step3Command == null)
+                return;
+            Step1Command.RaiseCanExecuteChanged();
+            Step2Command.RaiseCanExecuteChanged();
+            Step3Command.RaiseCanExecuteChanged();
         }
 
         void EnforceValidData(Func<string> action)

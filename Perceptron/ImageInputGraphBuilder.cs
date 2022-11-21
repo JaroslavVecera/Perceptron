@@ -25,7 +25,10 @@ namespace Perceptron
         public event Action OnRedrawGraph;
         public event Action OnRebuildGraph;
         public event Action OnResetDescription;
+        public event Action OnInputChanged;
+        public event Action OnImageInputChanged;
         public int MaxBiasNodes { get; set; } = 10;
+        public bool Mnist { get { if (ImageInputBox == null) return false; else return ImageInputBox.Mnist; } }
 
         public double Width { get; set; } = 0;
         public double Height { get; set; } = 0;
@@ -44,6 +47,16 @@ namespace Perceptron
         public void ImageModified()
         {
             ImageInputBox.ImageModified();
+        }
+
+        void InputChanged()
+        {
+            OnInputChanged?.Invoke();
+        }
+
+        void ImageInputChanged()
+        {
+            OnImageInputChanged?.Invoke();
         }
 
         public void RebuildGraph(ObservableCollection<PositionableViewModel> items)
@@ -73,12 +86,14 @@ namespace Perceptron
             else
             {
                 ImageInputBox.OnChangeInput -= ChangeInput;
+                ImageInputBox.OnImageInputChanged -= ImageInputChanged;
                 var image = ImageInputBox.Array;
                 var testSet = ImageInputBox.TestSet;
                 var path = ImageInputBox.Path;
                 ImageInputBox = new ImageInputBoxViewModel(testSet, path, image);
             }
             ImageInputBox.OnChangeInput += ChangeInput;
+            ImageInputBox.OnImageInputChanged += ImageInputChanged;
             ImageInputBox.Notify();
             Brace = new BraceViewModel();
         }
@@ -93,6 +108,7 @@ namespace Perceptron
                 n.OnRemove -= RemoveBiasNode;
                 n.OnGetCrossButtonEnabled -= GetCrossButtonEnabled;
                 n.Arrow -= BiasNodeArrow;
+                n.OnInputChanged -= InputChanged;
             });
             BiasNodes.Clear();
             for (int i = 0; i < count; i++)
@@ -104,6 +120,7 @@ namespace Perceptron
                 n.OnRemove += RemoveBiasNode;
                 n.OnGetCrossButtonEnabled += GetCrossButtonEnabled;
                 n.Arrow += BiasNodeArrow;
+                n.OnInputChanged += InputChanged;
             });
             NotifyBiasNodes();
         }
@@ -154,6 +171,7 @@ namespace Perceptron
             if (!graphItems.Any())
             {
                graphItems.Add(TrainingBox);
+               
             }
             OutputNodes.ForEach(n => graphItems.Add(n));
             Edges.ForEach(e => graphItems.Add(e));

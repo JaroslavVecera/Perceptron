@@ -23,6 +23,7 @@ namespace Perceptron
         public event Action OnRedrawGraph;
         public event Action OnRebuildGraph;
         public event Action OnResetDescription;
+        public event Action OnInputChanged;
         int LastNodeIndex { get; set; } = 0;
         int LastTrainingIndex { get; set; } = 0;
         public int MaxInputNodes { get; set; } = 7;
@@ -68,6 +69,11 @@ namespace Perceptron
             ExecutionService.ResetProgress();
         }
 
+        void InputChanged()
+        {
+            OnInputChanged?.Invoke();
+        }
+
         #region Rebuilding
         void RebuildInputNodes()
         {
@@ -79,6 +85,7 @@ namespace Perceptron
                 n.OnRemove -= RemoveInputNode;
                 n.OnGetCrossButtonEnabled -= GetCrossButtonEnabled;
                 n.Arrow -= InputNodeArrow;
+                n.OnInputChanged -= InputChanged;
             });
             InputNodes.Clear();
             for (int i = 0; i < count; i++)
@@ -90,6 +97,7 @@ namespace Perceptron
                 n.OnRemove += RemoveInputNode;
                 n.OnGetCrossButtonEnabled += GetCrossButtonEnabled;
                 n.Arrow += InputNodeArrow;
+                n.OnInputChanged += InputChanged;
             });
             NotifyInputNodes();
         }
@@ -110,12 +118,14 @@ namespace Perceptron
                 SumNode.OnGetBias -= GetBias;
                 SumNode.OnSetBias -= SetBias;
                 SumNode.Arrow -= SumNodeArrow;
+                SumNode.OnInputChanged -= InputChanged;
             }
             SumNode = new SumNodeViewModel();
             SumNode.GetSum += GetSum;
             SumNode.OnGetBias += GetBias;
             SumNode.OnSetBias += SetBias;
             SumNode.Arrow += SumNodeArrow;
+            SumNode.OnInputChanged += InputChanged;
             NotifySumNode();
             NotifyBiasNode();
         }
@@ -128,6 +138,7 @@ namespace Perceptron
                 n.OnGetValue -= GetWeightInput;
                 n.OnSetValue -= SetWeightInput;
                 n.Arrow -= WeightArrow;
+                n.OnInputChanged -= InputChanged;
             });
             Weights.Clear();
             for (int i = 0; i < count; i++)
@@ -137,6 +148,7 @@ namespace Perceptron
                 n.OnGetValue += GetWeightInput;
                 n.OnSetValue += SetWeightInput;
                 n.Arrow += WeightArrow;
+                n.OnInputChanged += InputChanged;
             });
             NotifyWeights();
         }
@@ -170,6 +182,7 @@ namespace Perceptron
                 TrainingBox.OnGetCoefficient -= GetTrainingCoefficient;
                 TrainingBox.OnSetTraining -= SetTraining;
                 TrainingBox.Arrow -= TrainingArrow;
+                TrainingBox.OnInputChanged -= InputChanged;
             }
             TrainingBox = new TrainingViewModel();
             TrainingBox.OnSetOutput += SetDesiredOutput;
@@ -177,6 +190,7 @@ namespace Perceptron
             TrainingBox.OnGetCoefficient += GetTrainingCoefficient;
             TrainingBox.OnSetTraining += SetTraining;
             TrainingBox.Arrow += TrainingArrow;
+            TrainingBox.OnInputChanged += InputChanged;
             NotifyTrainingBox();
         }
 

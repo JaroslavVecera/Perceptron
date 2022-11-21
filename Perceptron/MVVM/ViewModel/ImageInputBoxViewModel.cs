@@ -14,7 +14,9 @@ namespace Perceptron.MVVM.ViewModel
     class ImageInputBoxViewModel : PositionableViewModel
     {
         BitmapSource _bitmapSource;
+        public event Action OnImageInputChanged;
         bool _mnist = true;
+        public bool Mnist { get { return _mnist; } }
         public string Path { get; set; } = "";
         public event Action<float[]> OnChangeInput;
         float[] _array;
@@ -61,11 +63,13 @@ namespace Perceptron.MVVM.ViewModel
             {
                 _mnist = false;
                 LoadPicture();
+                OnImageInputChanged?.Invoke();
             });
             MnistCommand = new RelayCommand(o =>
             {
                 _mnist = true;
                 SetPictureArray(TestSet.Tests[ImageIndex].input);
+                OnImageInputChanged?.Invoke();
             });
         }
 

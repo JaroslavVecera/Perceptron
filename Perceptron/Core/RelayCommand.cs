@@ -19,6 +19,11 @@ namespace Perceptron.Core
             _execute = execute;
             _canExecute = canExecute;
         }
+        public void RaiseCanExecuteChanged()
+        {
+            if (CanExecuteChanged != null)
+                CanExecuteChanged(this, new EventArgs());
+        }
 
         public bool CanExecute(object parameter)
         {
@@ -41,6 +46,12 @@ namespace Perceptron.Core
         {
             _execute = execute;
             _canExecute = canExecute;
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            if (CanExecuteChanged != null)
+                CanExecuteChanged(this, new EventArgs());
         }
 
         public bool CanExecute(object parameter)

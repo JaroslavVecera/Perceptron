@@ -13,6 +13,7 @@ namespace Perceptron.MVVM.ViewModel
         public event Func<float> OnGetCoefficient;
         public event Action<int> OnSetOutput;
         public event Action<bool> OnSetTraining;
+        public event Action OnInputChanged;
         public RelayCommand<ArrowType> ArrowCommand1 { get; set; }
         public RelayCommand<ArrowType> ArrowCommand2 { get; set; }
         public event Action<ArrowType, int> Arrow;
@@ -94,7 +95,10 @@ namespace Perceptron.MVVM.ViewModel
             float parsed = 0;
             bool canParse = float.TryParse(value, out parsed);
             if (canParse != IsNumeric)
+            {
                 IsNumeric = canParse;
+                OnInputChanged?.Invoke();
+            }
             if (canParse)
                 Coefficient = parsed;
         }
@@ -114,7 +118,10 @@ namespace Perceptron.MVVM.ViewModel
         {
             bool isOutputValid = output == "0" || output == "1";
             if (isOutputValid != IsValidOutput)
+            {
                 IsValidOutput = isOutputValid;
+                OnInputChanged?.Invoke();
+            }
             if (isOutputValid)
                 DesiredOutput = output == "0" ? 0 : 1;
         }

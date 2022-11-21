@@ -15,6 +15,7 @@ namespace Perceptron.MVVM.ViewModel
         public event Func<int, float> OnGetValue;
         public RelayCommand<ArrowType> ArrowCommand { get; set; }
         public event Action<ArrowType, int> Arrow;
+        public event Action OnInputChanged;
         bool _focused = false;
         public bool Focused { get { return _focused; } set { _focused = value; OnPropertyChanged(); } }
 
@@ -54,7 +55,10 @@ namespace Perceptron.MVVM.ViewModel
             float parsed = 0;
             bool canParse = float.TryParse(value, out parsed);
             if (canParse != IsNumeric)
+            {
                 IsNumeric = canParse;
+                OnInputChanged?.Invoke();
+            }
             if (canParse)
                 Value = parsed;
         }

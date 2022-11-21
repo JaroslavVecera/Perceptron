@@ -49,7 +49,8 @@ namespace Perceptron.MVVM.ViewModel
             set 
             { 
                 Builder.SetTraining(value);
-                TrainingBox.SetVisibility(value);    
+                TrainingBox.SetVisibility(value);
+                InputChanged();
             } 
         }
 
@@ -65,6 +66,7 @@ namespace Perceptron.MVVM.ViewModel
             TrainingBox.OnSetCoefficient += Builder.SetTrainingCoefficient;
             TrainingBox.OnValueChanged();
             MnistLikeImageReader.OnModifyImage += ModifyImage;
+            TrainingBox.OnInputChanged += InputChanged;
         }
 
         void ModifyImage()
@@ -80,9 +82,13 @@ namespace Perceptron.MVVM.ViewModel
             {
                 Builder.OnRebuildGraph -= RebuildGraph;
                 Builder.OnRedrawGraph -= RedrawGraph;
+                Builder.OnInputChanged -= InputChanged;
+                Builder.OnImageInputChanged += ImageInputChanged;
                 //training = Builder.GetTrainingBox();
             }
             Builder = new ImageInputGraphBuilder(ExecutionService, Network);
+            Builder.OnInputChanged += InputChanged;
+            Builder.OnImageInputChanged += ImageInputChanged;
             //Builder.SetTrainingBox(training);
             Builder.OnRebuildGraph += RebuildGraph;
             Builder.OnRedrawGraph += RedrawGraph;
@@ -119,10 +125,26 @@ namespace Perceptron.MVVM.ViewModel
             Step1Command = new RelayCommand(o =>
             {
                 EnforceValidData(ExecutionService.Step1);
+            },
+            o =>
+            {
+                return AreValuesValid();
             });
             Step2Command = new RelayCommand(o =>
             {
                 EnforceValidData(ExecutionService.Step2);
+            },
+            o =>
+            {
+                return AreValuesValid();
+            });
+            Step3Command = new RelayCommand(o =>
+            {
+                //EnforceValidData(ExecutionService.Step3);
+            },
+            o =>
+            {
+                return AreValuesValid();
             });
             ClearCommand = new RelayCommand(o =>
             {
@@ -170,7 +192,28 @@ namespace Perceptron.MVVM.ViewModel
             {
                 Builder.NextImage();
                 Builder.ResetProgress();
+            },
+            o =>
+            {
+                return Builder.Mnist;
             });
+        }
+
+        bool AreValuesValid()
+        {
+            return Builder.AreValuesValid() && (TrainingBox.IsNumeric || !ExecutionService.Training);
+        }
+
+        void InputChanged()
+        {
+            Step1Command?.RaiseCanExecuteChanged();
+            Step2Command?.RaiseCanExecuteChanged();
+            Step3Command?.RaiseCanExecuteChanged();
+        }
+
+        void ImageInputChanged()
+        {
+            NextCommand?.RaiseCanExecuteChanged();
         }
 
         void EnforceValidData(Func<string> action)

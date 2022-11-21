@@ -12,6 +12,7 @@ namespace Perceptron.MVVM.ViewModel
         public event Func<float?> GetSum;
         public event Action<float> OnSetBias;
         public event Func<float> OnGetBias;
+        public event Action OnInputChanged;
         public RelayCommand<ArrowType> ArrowCommand { get; set; }
         public event Action<ArrowType> Arrow;
         bool _focused = false;
@@ -64,7 +65,10 @@ namespace Perceptron.MVVM.ViewModel
             float parsed = 0;
             bool canParse = float.TryParse(value, out parsed);
             if (canParse != IsNumeric)
+            {
                 IsNumeric = canParse;
+                OnInputChanged?.Invoke();
+            }
             if (canParse)
                 Value = parsed;
         }
