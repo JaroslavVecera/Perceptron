@@ -39,10 +39,10 @@
         <DataTemplate DataType="{x:Type viewModel:ImageInputBoxViewModel}">
             <StackPanel Canvas.Left="50" Canvas.Top="100">
                 <Image Source="{Binding Image}" Width="200" Height="200" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-                <StackPanel Orientation="Horizontal">
-                    <Button Command="{Binding PictureCommand}">Load Picture</Button>
-                    <Button Command="{Binding MnistCommand}">Load MNIST</Button>
-                </StackPanel>
+                <UniformGrid Margin="0,2,0,0" Columns="2" VerticalAlignment="Stretch">
+                    <Button Style="{StaticResource RectButton}" Command="{Binding PictureCommand}">Load Picture</Button>
+                    <Button Style="{StaticResource RectButton}" Command="{Binding MnistCommand}">Load MNIST</Button>
+                </UniformGrid>
             </StackPanel>
         </DataTemplate>
         <DataTemplate DataType="{x:Type viewModel:BraceViewModel}">
@@ -97,7 +97,7 @@
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                  Orientation="Horizontal" Grid.Row="0" Grid.Column="4">
-                <TextBlock Text="Training"
+                <TextBlock VerticalAlignment="Center" Text="Training"
                            Grid.Column="4"
                            Grid.Row="0"
                            Foreground="White"

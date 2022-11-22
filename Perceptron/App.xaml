@@ -23,6 +23,7 @@
                 <ResourceDictionary Source="Themes/OutputNodeTheme.xaml" ></ResourceDictionary>
                 <ResourceDictionary Source="Themes/WeightTheme.xaml" ></ResourceDictionary>
                 <ResourceDictionary Source="Themes/ToggleButtonTheme.xaml" ></ResourceDictionary>
+                <ResourceDictionary Source="Themes/CheckboxTheme.xaml" ></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type viewModel:DirectInputViewModel}">

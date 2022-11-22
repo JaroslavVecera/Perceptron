@@ -56,7 +56,7 @@ namespace Perceptron.MVVM.ViewModel
 
         public ImageInputViewModel()
         {
-            Network = new ConsoleTest().Run(3);
+            Network = new ConsoleTest().Run(5);
             ExecutionService = new NetworkExecutionServiceImageInput(Network);
             CreateBuilder(false);
             ExecutionService.DesiredOutput = Network.Biases.Select(b => 0).ToList();
