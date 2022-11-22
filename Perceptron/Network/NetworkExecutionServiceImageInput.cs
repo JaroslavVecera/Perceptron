@@ -83,6 +83,24 @@ namespace Perceptron.Network
             return res;
         }
 
+        public string Step3(TestSet set)
+        {
+            string res = "";
+            if (!Training)
+                return Step1();
+            ResetProgress();
+            Network.Run();
+            int n = Network.Neurons;
+            set.Tests.ForEach(test =>
+            {
+                Network.InputLayer.InputArray = test.input;
+                Network.CalculateOutput();
+                Network.LearnNeurons(MnistOutputConvertor.EncodePositional(test.label, n));
+            });
+            Network.Stop();
+            return res;
+        }
+
         string DoStep()
         {
             if (State.Group == ExecutionStateGroup.Normal || (State.Group == ExecutionStateGroup.Activation && !Training))

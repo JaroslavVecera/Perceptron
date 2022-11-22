@@ -31,6 +31,11 @@ namespace Perceptron.MVVM.ViewModel
         public LongTrainingViewModel TrainingBox { get; set; } = new LongTrainingViewModel();
         ImageInputGraphBuilder Builder { get; set; }
         string Description { get; set; }
+        public bool Mnist { get; set; }
+
+        TestSet TestSet { get; set; } = new TestSet();
+        int TestIndex { get; set; }
+        string _imagePath = "";
 
         ObservableCollection<PositionableViewModel> _graphItems = new ObservableCollection<PositionableViewModel>();
         public ObservableCollection<PositionableViewModel> GraphItems
@@ -56,11 +61,13 @@ namespace Perceptron.MVVM.ViewModel
 
         public ImageInputViewModel()
         {
-            Network = new ConsoleTest().Run(5);
+            Mnist = true;
+            Network = new Network.Network(28 * 28, 5, 0.25f);
             ExecutionService = new NetworkExecutionServiceImageInput(Network);
             CreateBuilder(false);
             ExecutionService.DesiredOutput = Network.Biases.Select(b => 0).ToList();
             RebuildGraph();
+            SetData(TestSet.Tests[TestIndex].input, TestSet.Tests[TestIndex].label);
             InitializeCommands();
             TrainingBox.OnGetCoefficient += Builder.GetTrainingCoefficient;
             TrainingBox.OnSetCoefficient += Builder.SetTrainingCoefficient;
@@ -71,8 +78,28 @@ namespace Perceptron.MVVM.ViewModel
 
         void ModifyImage()
         {
-            Builder.ImageModified();
+            float[] arr = MnistLikeImageReader.LoadImage(_imagePath);
+            if (arr != null)
+                SetData(arr);
             ExecutionService.ResetProgress();
+        }
+
+        void LoadPicture()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.DefaultExt = ".png";
+            openFileDialog.Filter = "Images (.png)|*.png";
+            openFileDialog.CheckFileExists = true;
+            openFileDialog.CheckPathExists = true;
+            if (openFileDialog.ShowDialog() == true)
+            {
+                float[] arr = MnistLikeImageReader.LoadImage(openFileDialog.FileName);
+                if (arr != null)
+                {
+                    _imagePath = openFileDialog.FileName;
+                    SetData(arr);
+                }
+            }
         }
 
         void CreateBuilder(bool t)
@@ -83,14 +110,14 @@ namespace Perceptron.MVVM.ViewModel
                 Builder.OnRebuildGraph -= RebuildGraph;
                 Builder.OnRedrawGraph -= RedrawGraph;
                 Builder.OnInputChanged -= InputChanged;
-                Builder.OnImageInputChanged += ImageInputChanged;
+                Builder.OnImageInputChanged -= ImageInputChanged;
                 //training = Builder.GetTrainingBox();
             }
             Builder = new ImageInputGraphBuilder(ExecutionService, Network);
-            Builder.OnInputChanged += InputChanged;
             Builder.OnImageInputChanged += ImageInputChanged;
             //Builder.SetTrainingBox(training);
             Builder.OnRebuildGraph += RebuildGraph;
+            Builder.OnInputChanged += InputChanged;
             Builder.OnRedrawGraph += RedrawGraph;
             Builder.SetTraining(t);
         }
@@ -99,6 +126,12 @@ namespace Perceptron.MVVM.ViewModel
         {
             Builder.RebuildGraph(_graphItems);
             RedrawGraph();
+            LoadMnist();
+        }
+
+        void LoadMnist()
+        {
+            TestSet = MnistLoader.TakeTrainSet(Network.Neurons, 10000);
         }
 
         void RedrawGraph()
@@ -140,11 +173,19 @@ namespace Perceptron.MVVM.ViewModel
             });
             Step3Command = new RelayCommand(o =>
             {
-                //EnforceValidData(ExecutionService.Step3);
+                float[] input = Network.InputLayer.Output;
+                if (Builder.AreValuesValid() && (TrainingBox.IsNumeric || !ExecutionService.Training))
+                {
+                    Description = ExecutionService.Step3(TestSet);
+                    Builder.NotifyAll();
+                }
+                else
+                    ValuesErrorMessage();
+                Network.InputLayer.InputArray = input;
             },
             o =>
             {
-                return AreValuesValid();
+                return Mnist && AreValuesValid();
             });
             ClearCommand = new RelayCommand(o =>
             {
@@ -162,6 +203,7 @@ namespace Perceptron.MVVM.ViewModel
                     MessageBox.Show("This network is not suitable for MNIST input.", "Data error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
+                float[] oldInput = Network.InputLayer.Output;
                 Network = network;
                 //bool oldTraining = ExecutionService.Training;
                 bool t = ExecutionService.Training;
@@ -176,6 +218,7 @@ namespace Perceptron.MVVM.ViewModel
                 ExecutionService.DesiredOutput = Network.Biases.Select(b => 0).ToList();
                 //ExecutionService.Training = oldTraining;
                 RebuildGraph();
+                SetData(oldInput);
                 //ExecutionService.Training = oldTraining;
             });
             SaveCommand = new RelayCommand(o =>
@@ -190,13 +233,29 @@ namespace Perceptron.MVVM.ViewModel
             });
             NextCommand = new RelayCommand(o =>
             {
-                Builder.NextImage();
+                if (TestIndex >= TestSet.Size)
+                    TestIndex = 0;
+                TestIndex++;
+                SetData(TestSet.Tests[TestIndex].input, TestSet.Tests[TestIndex].label);
                 Builder.ResetProgress();
             },
             o =>
             {
-                return Builder.Mnist;
+                return Mnist;
             });
+        }
+
+        void SetData(float[] input, int label)
+        {
+            SetData(input);
+            ExecutionService.DesiredOutput = MnistOutputConvertor.EncodePositional(label, Network.Neurons).ToList();
+            Builder.NotifyAll();
+        }
+
+        void SetData(float[] input)
+        {
+            Network.InputLayer.InputArray = input;
+            Builder.SetImage(input);
         }
 
         bool AreValuesValid()
@@ -211,9 +270,15 @@ namespace Perceptron.MVVM.ViewModel
             Step3Command?.RaiseCanExecuteChanged();
         }
 
-        void ImageInputChanged()
+        void ImageInputChanged(bool mnist)
         {
+            if (mnist)
+                SetData(TestSet.Tests[TestIndex].input, TestSet.Tests[TestIndex].label);
+            else
+                LoadPicture();
+            Mnist = mnist;
             NextCommand?.RaiseCanExecuteChanged();
+            Step3Command?.RaiseCanExecuteChanged();
         }
 
         void EnforceValidData(Func<string> action)

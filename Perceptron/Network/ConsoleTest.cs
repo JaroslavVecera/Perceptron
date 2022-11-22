@@ -15,14 +15,16 @@ namespace Perceptron.Network
             if (!network.Run())
                 Trace.WriteLine("fail");
             TestSet testSet = new TestSet();
-            testSet.LoadTestMnist(@"C:\Users\Jarek\source\repos\Perceptron\data", true, num);
-            Train(network, testSet.GetIterator());
+            testSet.LoadTestMnist(@"", true, num);
+            //Train(network, testSet.GetIterator());
             network.Stop();
             /*Test(network);
             while (true)
                 OwnTest(network);*/
             return network;
         }
+
+        /*
         void Train(Network network, TestIterator iterator)
         {
             int i = 0;
@@ -97,6 +99,6 @@ namespace Perceptron.Network
         int DecodeOutput(int[] arr)
         {
             return MnistOutputConvertor.DecodePositional(arr);
-        }
+        }*/
     }
 }

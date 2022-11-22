@@ -25,10 +25,9 @@ namespace Perceptron
         public event Action OnRedrawGraph;
         public event Action OnRebuildGraph;
         public event Action OnResetDescription;
+        public event Action<bool> OnImageInputChanged;
         public event Action OnInputChanged;
-        public event Action OnImageInputChanged;
         public int MaxBiasNodes { get; set; } = 10;
-        public bool Mnist { get { if (ImageInputBox == null) return false; else return ImageInputBox.Mnist; } }
 
         public double Width { get; set; } = 0;
         public double Height { get; set; } = 0;
@@ -39,14 +38,9 @@ namespace Perceptron
             Network = network;
         }
 
-        public void NextImage()
+        public void SetImage(float[] image)
         {
-            ImageInputBox.NextImage();
-        }
-
-        public void ImageModified()
-        {
-            ImageInputBox.ImageModified();
+            ImageInputBox.SetPictureArray(image);
         }
 
         void InputChanged()
@@ -54,9 +48,9 @@ namespace Perceptron
             OnInputChanged?.Invoke();
         }
 
-        void ImageInputChanged()
+        void ImageInputChanged(bool mnist)
         {
-            OnImageInputChanged?.Invoke();
+            OnImageInputChanged?.Invoke(mnist);
         }
 
         public void RebuildGraph(ObservableCollection<PositionableViewModel> items)
@@ -85,16 +79,11 @@ namespace Perceptron
                 ImageInputBox = new ImageInputBoxViewModel();
             else
             {
-                ImageInputBox.OnChangeInput -= ChangeInput;
                 ImageInputBox.OnImageInputChanged -= ImageInputChanged;
                 var image = ImageInputBox.Array;
-                var testSet = ImageInputBox.TestSet;
-                var path = ImageInputBox.Path;
-                ImageInputBox = new ImageInputBoxViewModel(testSet, path, image);
+                ImageInputBox = new ImageInputBoxViewModel(image);
             }
-            ImageInputBox.OnChangeInput += ChangeInput;
             ImageInputBox.OnImageInputChanged += ImageInputChanged;
-            ImageInputBox.Notify();
             Brace = new BraceViewModel();
         }
 
@@ -396,11 +385,6 @@ namespace Perceptron
         void NotifyDesiredOutputs()
         {
             DesiredOutputNodes.ForEach(n => n.OnValueChanged());
-        }
-
-        void ChangeInput(float[] input)
-        {
-            Network.InputLayer.InputArray = input;
         }
     }
 }

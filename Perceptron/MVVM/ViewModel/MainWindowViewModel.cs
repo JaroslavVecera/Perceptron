@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Perceptron.Core;
+using Perceptron.Network;
 
 namespace Perceptron.MVVM.ViewModel
 {
@@ -29,9 +30,15 @@ namespace Perceptron.MVVM.ViewModel
 
         public MainWindowViewModel()
         {
+            LoadMnist();
             InitializeViews();
             InitializeCommands();
             CurrentView = DirectInputView;
+        }
+
+        void LoadMnist()
+        {
+            MnistLoader.Load(10000, 100);
         }
 
         void InitializeViews()

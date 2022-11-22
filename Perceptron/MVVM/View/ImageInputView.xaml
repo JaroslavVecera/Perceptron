@@ -12,6 +12,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <converter:BoolToColorConverter x:Key="BoolToColorConverter" />
+        <converter:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <DataTemplate DataType="{x:Type viewModel:InputNodeViewModel}">
             <TextBox
                 Style="{StaticResource InputBox}"
@@ -39,7 +40,7 @@
         <DataTemplate DataType="{x:Type viewModel:ImageInputBoxViewModel}">
             <StackPanel Canvas.Left="50" Canvas.Top="100">
                 <Image Source="{Binding Image}" Width="200" Height="200" RenderOptions.BitmapScalingMode="NearestNeighbor" />
-                <UniformGrid Margin="0,2,0,0" Columns="2" VerticalAlignment="Stretch">
+                <UniformGrid Margin="0,2,0,0" Rows="2" Columns="2" VerticalAlignment="Stretch">
                     <Button Style="{StaticResource RectButton}" Command="{Binding PictureCommand}">Load Picture</Button>
                     <Button Style="{StaticResource RectButton}" Command="{Binding MnistCommand}">Load MNIST</Button>
                 </UniformGrid>
@@ -102,10 +103,10 @@
                            Grid.Row="0"
                            Foreground="White"
                            FontSize="16"/>
-                <ToggleButton IsChecked="{Binding Training, Mode=OneWayToSource}" Style="{StaticResource ToggleButton}" Margin="10,5,0,0" Width="30" />
-                <StackPanel Visibility="{Binding }" Margin="10,0,0,0" >
+                <ToggleButton x:Name="Toggle" IsChecked="{Binding Training, Mode=OneWayToSource}" Style="{StaticResource ToggleButton}" Margin="10,5,0,0" Width="30" />
+                <StackPanel Visibility="{Binding IsChecked, ElementName=Toggle, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Margin="10,0,0,0" >
                     <TextBlock Foreground="White" FontSize="9">Exclusivity</TextBlock>
-                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Exclusivity}"/>
+                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Exclusivity, Mode=OneWayToSource}"/>
                 </StackPanel>
             </StackPanel>
             

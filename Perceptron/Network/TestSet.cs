@@ -11,7 +11,7 @@ namespace Perceptron.Network
     public struct Test
     {
         public float[] input;
-        public int[] output;
+        public int label;
     }
 
     public class TestSet
@@ -23,17 +23,17 @@ namespace Perceptron.Network
             return new TestIterator(this);
         }
 
-        public void LoadMnist(string path, bool train)
+        public void LoadMnist(string path, bool train, int n)
         {
             IEnumerable<TestCase> data;
             if (train)
                 data = FileReaderMNIST.LoadImagesAndLables(Path.Join(path, "train-labels-idx1-ubyte.gz"), Path.Join(path, "train-images-idx3-ubyte.gz"));
             else
                 data = FileReaderMNIST.LoadImagesAndLables(Path.Join(path, "t10k-labels-idx1-ubyte.gz"), Path.Join(path, "t10k-images-idx3-ubyte.gz"));
-            Tests = data.ToList().Select((TestCase tc) =>
+            Tests = data.Take(n).ToList().Select((TestCase tc) =>
             {
                 Test t = new Test() { input = FlattenArray(tc.Image) };
-                t.output = MnistOutputConvertor.EncodePositional(tc.Label);
+                t.label = tc.Label;
                 return t;
             }).ToList();
         }
@@ -48,7 +48,7 @@ namespace Perceptron.Network
             Tests = data.Where(c => c.Label < num).Take(1000).ToList().Select((TestCase tc) =>
             {
                 Test t = new Test() { input = FlattenArray(tc.Image) };
-                t.output = MnistOutputConvertor.EncodePositional(tc.Label, num);
+                t.label = tc.Label;
                 return t;
             }).ToList();
         }
@@ -82,7 +82,10 @@ namespace Perceptron.Network
 
         public Test GetNext()
         {
-            return _testSet.Tests[pos++];
+            Test t =_testSet.Tests[pos++];
+            if (IsEnd())
+                pos = 0;
+            return t;
         }
 
         public bool IsEnd()
