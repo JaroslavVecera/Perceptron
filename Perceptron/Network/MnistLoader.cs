@@ -22,7 +22,7 @@ namespace Perceptron.Network
             }
             catch(Exception e)
             {
-                MessageBox.Show("Files t10k-images-idx3-ubyte.gz and t10k-labels-idx1-ubyte.gz are missing. Mnist dataset is unavailable.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Files train-images-idx3-ubyte.gz and train-labels-idx1-ubyte.gz are missing. Mnist dataset is unavailable.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
         }

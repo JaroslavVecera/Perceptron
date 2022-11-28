@@ -136,7 +136,7 @@
                 </ItemsControl>
             </Grid>
 
-            <Grid Grid.Row="1" Margin="0,0,0,100">
+            <Grid Grid.Row="1" Margin="0,0,0,80">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
