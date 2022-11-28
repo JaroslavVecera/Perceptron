@@ -50,6 +50,9 @@ namespace Perceptron.MVVM.ViewModel
             MnistCommand = new RelayCommand(o =>
             {
                 OnImageInputChanged?.Invoke(true);
+            }, o =>
+            {
+                return MainWindowViewModel.Available;
             });
         }
 

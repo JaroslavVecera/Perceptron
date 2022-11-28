@@ -11,6 +11,7 @@ namespace Perceptron.MVVM.ViewModel
     class MainWindowViewModel : ObservableObject
     {
         ObservableObject _currentView;
+        public static bool Available { get; set; }
 
         DirectInputViewModel DirectInputView { get; set; }
         ImageInputViewModel ImageInputView { get; set; }
@@ -30,15 +31,15 @@ namespace Perceptron.MVVM.ViewModel
 
         public MainWindowViewModel()
         {
-            LoadMnist();
+            Available = LoadMnist();
             InitializeViews();
             InitializeCommands();
             CurrentView = DirectInputView;
         }
 
-        void LoadMnist()
+        bool LoadMnist()
         {
-            MnistLoader.Load(10000, 100);
+            return MnistLoader.Load(10000);
         }
 
         void InitializeViews()

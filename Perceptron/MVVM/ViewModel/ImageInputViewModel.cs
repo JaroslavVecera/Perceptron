@@ -61,13 +61,12 @@ namespace Perceptron.MVVM.ViewModel
 
         public ImageInputViewModel()
         {
-            Mnist = true;
             Network = new Network.Network(28 * 28, 5, 0.25f);
             ExecutionService = new NetworkExecutionServiceImageInput(Network);
             CreateBuilder(false);
             ExecutionService.DesiredOutput = Network.Biases.Select(b => 0).ToList();
             RebuildGraph();
-            SetData(TestSet.Tests[TestIndex].input, TestSet.Tests[TestIndex].label);
+            SetData(new float[28 * 28].Select(f => 255f).ToArray());
             InitializeCommands();
             TrainingBox.OnGetCoefficient += Builder.GetTrainingCoefficient;
             TrainingBox.OnSetCoefficient += Builder.SetTrainingCoefficient;

@@ -42,7 +42,17 @@
                 <Image Source="{Binding Image}" Width="200" Height="200" RenderOptions.BitmapScalingMode="NearestNeighbor" />
                 <UniformGrid Margin="0,2,0,0" Rows="2" Columns="2" VerticalAlignment="Stretch">
                     <Button Style="{StaticResource RectButton}" Command="{Binding PictureCommand}">Load Picture</Button>
-                    <Button Style="{StaticResource RectButton}" Command="{Binding MnistCommand}">Load MNIST</Button>
+                    <Button Command="{Binding MnistCommand}" Content="Load MNIST">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource RectButton}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </Trigger> 
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </UniformGrid>
             </StackPanel>
         </DataTemplate>

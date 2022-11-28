@@ -17,7 +17,7 @@ namespace Perceptron.Network
     public class TestSet
     {
         public List<Test> Tests { get; set; }
-        public int Size { get { return Tests.Count();  } }
+        public int Size { get { return Tests == null ? 0 : Tests.Count();  } }
         public TestIterator GetIterator()
         {
             return new TestIterator(this);
