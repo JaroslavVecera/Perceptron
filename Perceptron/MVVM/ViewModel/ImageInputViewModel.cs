@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -32,6 +33,7 @@ namespace Perceptron.MVVM.ViewModel
         ImageInputGraphBuilder Builder { get; set; }
         string Description { get; set; }
         public bool Mnist { get; set; }
+        bool Running { get; set; } = false;
 
         TestSet TestSet { get; set; } = new TestSet();
         int TestIndex { get; set; }
@@ -48,20 +50,25 @@ namespace Perceptron.MVVM.ViewModel
             }
         }
         public bool Exclusivity { set { Builder.Exclusivity = value; } }
+        public bool Batch { set { ExecutionService.Online = !value; } }
 
+        bool _training = false;
         public bool Training
         {
-            set 
-            { 
+            set
+            {
+                _training = value;
                 Builder.SetTraining(value);
                 TrainingBox.SetVisibility(value);
                 InputChanged();
-            } 
+                OnPropertyChanged();
+            }
+            get { return _training; }
         }
 
         public ImageInputViewModel()
         {
-            Network = new Network.Network(28 * 28, 5, 0.25f);
+            Network = new Network.Network(28 * 28, 1, 0.05f);
             ExecutionService = new NetworkExecutionServiceImageInput(Network);
             CreateBuilder(false);
             ExecutionService.DesiredOutput = Network.Biases.Select(b => 0).ToList();
@@ -172,15 +179,32 @@ namespace Perceptron.MVVM.ViewModel
             });
             Step3Command = new RelayCommand(o =>
             {
-                float[] input = Network.InputLayer.Output;
-                if (Builder.AreValuesValid() && (TrainingBox.IsNumeric || !ExecutionService.Training))
+                if (Running)
+                    Network.StopLearning();
+                if (!ExecutionService.Training)
+                    return;
+                Running = true;
+                Semaphore s = new Semaphore(0, 1);
+                TrainingWindow window = new TrainingWindow();
+                window.Owner = Application.Current.MainWindow;
+                Task.Factory.StartNew(() =>
                 {
-                    Description = ExecutionService.Step3(TestSet);
-                    Builder.NotifyAll();
-                }
-                else
-                    ValuesErrorMessage();
-                Network.InputLayer.InputArray = input;
+                    float[] input = Network.InputLayer.Output;
+                    if (Builder.AreValuesValid() && (TrainingBox.IsNumeric || !ExecutionService.Training))
+                    {
+                        Description = ExecutionService.Step3(TestSet);
+                        Builder.NotifyAll();
+                    }
+                    else
+                        ValuesErrorMessage();
+                    Network.InputLayer.InputArray = input;
+                    Running = false;
+                    s.Release();
+                });
+                window.DataContext = TrainWindowViewModel.GetInstance();
+                window.ShowDialog();
+                Network.StopLearning();
+                s.WaitOne();
             },
             o =>
             {
@@ -232,9 +256,9 @@ namespace Perceptron.MVVM.ViewModel
             });
             NextCommand = new RelayCommand(o =>
             {
+                TestIndex++;
                 if (TestIndex >= TestSet.Size)
                     TestIndex = 0;
-                TestIndex++;
                 SetData(TestSet.Tests[TestIndex].input, TestSet.Tests[TestIndex].label);
                 Builder.ResetProgress();
             },

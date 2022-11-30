@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Perceptron.MVVM.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace Perceptron.Network
     public class Network
     {
         InputLayer _input;
+        bool _stopLearning = false;
         Random Random { get; } = new Random();
         public float LearningCoeficient { get; set; }
         public float[] _biases;
@@ -59,6 +61,11 @@ namespace Perceptron.Network
         public Network()
         {
 
+        }
+
+        public void StopLearning()
+        {
+            _stopLearning = true;
         }
 
         public Network(int inputs, int neurons, float learningCoeficient)
@@ -166,11 +173,13 @@ namespace Perceptron.Network
             LearnNeuronUnsafe(neuron, expected);
         }
 
-        void LearnNeuronUnsafe(int neuron, int expected)
-        { 
+        bool LearnNeuronUnsafe(int neuron, int expected)
+        {
+            bool e = expected != Output[neuron];
             for (int i = 0; i < InputLayer.Size; i++)
                 Weights[i, neuron] += LearningCoeficient * InputLayer[i] * (expected - Output[neuron]);
             Biases[neuron] += -LearningCoeficient * (expected - Output[neuron]);
+            return e;
         }
 
         public void LearnNeurons(int[] expected)
@@ -181,12 +190,81 @@ namespace Perceptron.Network
             LearnNeuronsUnsafe(expected);
         }
 
-        void LearnNeuronsUnsafe(int[] expected)
+        bool LearnNeuronsUnsafe(int[] expected)
         {
+            bool e = false;
             for (int i = 0; i < Neurons; i++)
-                LearnNeuronUnsafe(i, expected[i]);
+                e = e || LearnNeuronUnsafe(i, expected[i]);
+            return e;
         }
-            
+
+        public void LearnSetOnline(TestSet set)
+        {
+            Run();
+            TrainWindowViewModel.GetInstance().Percent = 0;
+            _stopLearning = false;
+            int e = 0;
+            int a = 0;
+            do
+            {
+                e = 0;
+                a = 0;
+                set.Tests.ForEach(test =>
+                {
+                    InputLayer.InputArray = test.input;
+                    CalculateOutput();
+                    if (LearnNeuronsUnsafe(MnistOutputConvertor.EncodePositional(test.label, Neurons)))
+                        e++;
+                    a++;
+                });
+                TrainWindowViewModel.GetInstance().Percent = (int)(100 - Math.Ceiling(100 * ((double)e / (double)a)));
+            } while (e != 0 && !_stopLearning);
+            _stopLearning = false;
+            Stop();
+        }
+
+        public void LearnSetBatch(TestSet set)
+        {
+            TrainWindowViewModel.GetInstance().Percent = 0;
+            _stopLearning = false;
+            int e = 0;
+            int a = 0;
+            float[] deltaBiases = new float[Neurons];
+            float[,] deltaWeights = new float[InputLayer.Size, Neurons];
+            do
+            {
+                Run();
+                e = 0;
+                a = 0;
+                set.Tests.ForEach(test =>
+                {
+                    InputLayer.InputArray = test.input;
+                    int[] expected = MnistOutputConvertor.EncodePositional(test.label);
+                    CalculateOutput();
+                    bool err = false;
+                    for (int i = 0; i < Neurons; i++)
+                    {
+                        if (Output[i] != expected[i])
+                            err = true;
+                        for (int j = 0; j < InputLayer.Size; j++)
+                            deltaWeights[j, i] += LearningCoeficient * InputLayer[j] * (expected[i] - Output[i]);
+                        deltaBiases[i] += -LearningCoeficient * (expected[i] - Output[i]);
+                    }
+                    if (err)
+                        e++;
+                    a++;
+                });
+                Stop();
+                for (int i = 0; i < Neurons; i++)
+                    Biases[i] += deltaBiases[i];
+                for (int i = 0; i < InputLayer.Size; i++)
+                    for (int j = 0; j < Neurons; j++)
+                        Weights[i, j] += deltaWeights[i, j];
+                TrainWindowViewModel.GetInstance().Percent = (int)(100 - Math.Ceiling(100 * ((double)e / (double)a)));
+            } while (e != 0 && !_stopLearning);
+            _stopLearning = false;
+        }
+
         bool ValidateProperties()
         {
             int m = InputLayer.Size;

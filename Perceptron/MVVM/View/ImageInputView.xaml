@@ -113,10 +113,14 @@
                            Grid.Row="0"
                            Foreground="White"
                            FontSize="16"/>
-                <ToggleButton x:Name="Toggle" IsChecked="{Binding Training, Mode=OneWayToSource}" Style="{StaticResource ToggleButton}" Margin="10,5,0,0" Width="30" />
+                <ToggleButton x:Name="Toggle" IsChecked="{Binding Training}" Style="{StaticResource ToggleButton}" Margin="10,5,0,0" Width="30" />
                 <StackPanel Visibility="{Binding IsChecked, ElementName=Toggle, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Margin="10,0,0,0" >
                     <TextBlock Foreground="White" FontSize="9">Exclusivity</TextBlock>
                     <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Exclusivity, Mode=OneWayToSource}"/>
+                </StackPanel>
+                <StackPanel Visibility="{Binding IsChecked, ElementName=Toggle, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}" Margin="10,0,0,0" >
+                    <TextBlock Foreground="White" FontSize="9">Batch</TextBlock>
+                    <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Batch, Mode=OneWayToSource}"/>
                 </StackPanel>
             </StackPanel>
             

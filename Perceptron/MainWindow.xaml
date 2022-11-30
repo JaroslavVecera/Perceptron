@@ -12,6 +12,12 @@
         AllowsTransparency="True"
         ResizeMode="CanResizeWithGrip"
         Title="MainWindow" MinHeight="750" MinWidth="1200">
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Control"
+                    Key="T"
+                    Command="{Binding TrainCommand}" />
+    </Window.InputBindings>
+
     <Window.Style>
         <Style TargetType="Window">
             <Style.Triggers>

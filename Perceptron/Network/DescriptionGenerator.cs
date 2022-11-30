@@ -46,19 +46,19 @@ namespace Perceptron.Network
                    @"\text{Output: }" + network.Output[0];
         }
 
-        public static string UpdateBias(Network network, float desiredOutput)
+        public static string UpdateBias(Network network, float desiredOutput, int output)
         {
             string res = @"\text{bias}\;\;-\!=\;\;";
             res += network.LearningCoeficient + @"\cdot(";
-            res += desiredOutput + "-" + network.Output[0] + ")";
+            res += desiredOutput + "-" + output + ")";
             return res;
         }
 
-        public static string UpdateWeight(Network network, float desiredOutput, int index)
+        public static string UpdateWeight(Network network, float desiredOutput, int output, int index)
         {
             string res = @"\text{weight}_{" + index + @"}{\;\;+\!\!=\;\;}";
             res += network.LearningCoeficient + @"\cdot" + network.InputLayer[index] + @"\cdot(";
-            res += desiredOutput + "-" + network.Output[0] + ")";
+            res += desiredOutput + "-" + output + ")";
             return res;
         }
     }

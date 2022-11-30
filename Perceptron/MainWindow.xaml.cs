@@ -19,6 +19,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System.IO;
 using System.Runtime.InteropServices;
+using Perceptron.Core;
 
 namespace Perceptron
 {

@@ -40,6 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FontAwesome.WPF" Version="4.7.0.9" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     <PackageReference Include="MNIST.IO" Version="1.0.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />

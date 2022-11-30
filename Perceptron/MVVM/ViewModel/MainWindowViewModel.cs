@@ -10,6 +10,7 @@ namespace Perceptron.MVVM.ViewModel
 {
     class MainWindowViewModel : ObservableObject
     {
+        public RelayCommand TrainCommand { get; set; }
         ObservableObject _currentView;
         public static bool Available { get; set; }
 
@@ -57,6 +58,10 @@ namespace Perceptron.MVVM.ViewModel
             ImageInputViewCommand = new RelayCommand((x) =>
             {
                 CurrentView = ImageInputView;
+            });
+            TrainCommand = new RelayCommand(o =>
+            {
+                ImageInputView.Training = !ImageInputView.Training;
             });
         }
     }

@@ -17,7 +17,7 @@ namespace Perceptron.Network
 
         public static int[] EncodePositional(int i, int num)
         {
-            int[] res = new int[num];
+            int[] res = new int[Math.Max(num, 2)];
             res[i] = 1;
             return res;
         }

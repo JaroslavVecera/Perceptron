@@ -12,6 +12,7 @@ namespace Perceptron.Network
         public List<int?> Outputs { get; set; } = new List<int?>();
         ExecutionState State { get; set; } = new ExecutionState() { Group = ExecutionStateGroup.Normal };
         Network Network { get; set; }
+        public bool Online { get; set; } = false;
         public bool Training { get; set; } = true;
         public NetworkExecutionServiceImageInput(Network network)
         {
@@ -89,15 +90,10 @@ namespace Perceptron.Network
             if (!Training)
                 return Step1();
             ResetProgress();
-            Network.Run();
-            int n = Network.Neurons;
-            set.Tests.ForEach(test =>
-            {
-                Network.InputLayer.InputArray = test.input;
-                Network.CalculateOutput();
-                Network.LearnNeurons(MnistOutputConvertor.EncodePositional(test.label, n));
-            });
-            Network.Stop();
+            if (Online)
+                Network.LearnSetOnline(set);
+            else
+                Network.LearnSetBatch(set);
             return res;
         }
 

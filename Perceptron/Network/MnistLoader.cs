@@ -29,12 +29,12 @@ namespace Perceptron.Network
 
         public static TestSet TakeTrainSet(int numbers, int maxCount)
         {
-            return new TestSet() { Tests = _trainSet.Tests?.Where(t => t.label < numbers).Take(maxCount).ToList() };
+            return new TestSet() { Tests = _trainSet.Tests?.Where(t => t.label < Math.Max(2, numbers)).Take(maxCount).ToList() };
         }
 
         public static TestSet TakeTestSet(int numbers, int maxCount)
         {
-            return new TestSet() { Tests = _testSet.Tests?.Where(t => t.label < numbers).Take(maxCount).ToList() };
+            return new TestSet() { Tests = _testSet.Tests?.Where(t => t.label < Math.Max(2, numbers)).Take(maxCount).ToList() };
         }
     }
 }

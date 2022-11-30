@@ -152,7 +152,7 @@ namespace Perceptron.Network
                 {
                     State.Group = ExecutionStateGroup.UpdateBias;
                     Network.Biases[0] += -Network.LearningCoeficient * (DesiredOutput - (float)Output);
-                    return DescriptionGenerator.UpdateBias(Network, DesiredOutput);
+                    return DescriptionGenerator.UpdateBias(Network, DesiredOutput, (int)Output);
                 }
                 else
                 {
@@ -171,7 +171,7 @@ namespace Perceptron.Network
                 State.Group = ExecutionStateGroup.UpdateWeight;
                 State.Index = 0;
                 Network.Weights[State.Index, 0] += Network.LearningCoeficient * Network.InputLayer[State.Index] * (DesiredOutput - (float)Output);
-                return DescriptionGenerator.UpdateWeight(Network, DesiredOutput, State.Index);
+                return DescriptionGenerator.UpdateWeight(Network, DesiredOutput, (int)Output, State.Index);
             }
             else if (State.Group == ExecutionStateGroup.UpdateWeight)
             {
@@ -184,7 +184,7 @@ namespace Perceptron.Network
                 if (State.Index < Network.InputLayer.Size)
                 {
                     Network.Weights[State.Index, 0] += Network.LearningCoeficient * Network.InputLayer[State.Index] * (DesiredOutput - (float)Output);
-                    return DescriptionGenerator.UpdateWeight(Network, DesiredOutput, State.Index);
+                    return DescriptionGenerator.UpdateWeight(Network, DesiredOutput, (int)Output, State.Index);
                 }
                 else
                 {
