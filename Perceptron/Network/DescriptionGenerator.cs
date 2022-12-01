@@ -40,7 +40,7 @@ namespace Perceptron.Network
         public static string Output(Network network, float sum)
         {
             return "" + sum +
-                   (network.Output[0] == 0 ? @"\leq" : ">") +
+                   (network.Output[0] == 0 ? @"<" : @"\geq") +
                    network.Biases[0] +
                    @"\\" +
                    @"\text{Output: }" + network.Output[0];

@@ -153,7 +153,7 @@ namespace Perceptron.Network
 
         int CalculateOutputUnsafe(int neuron)
         {
-            _output[neuron] = GetWeightedSum(neuron) > _biases[neuron] ? 1 : 0;
+            _output[neuron] = GetWeightedSum(neuron) >= _biases[neuron] ? 1 : 0;
             return _output[neuron];
         }
 

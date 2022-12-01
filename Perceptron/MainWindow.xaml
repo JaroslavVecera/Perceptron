@@ -11,7 +11,8 @@
         WindowStyle="None"
         AllowsTransparency="True"
         ResizeMode="CanResizeWithGrip"
-        Title="MainWindow" MinHeight="750" MinWidth="1200">
+        Title="MainWindow" MinHeight="750" MinWidth="1200"
+        WindowStartupLocation="CenterScreen">
     <Window.InputBindings>
         <KeyBinding Modifiers="Control"
                     Key="T"
